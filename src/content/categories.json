@@ -1,0 +1,17 @@
+[
+  {
+    "name": "Performance",
+    "slug": "performance",
+    "description": "웹 성능 최적화 및 관련 기술"
+  },
+  {
+    "name": "TypeScript",
+    "slug": "typescript",
+    "description": "TypeScript 개발 및 타입 시스템"
+  },
+  {
+    "name": "General",
+    "slug": "general",
+    "description": "일반 개발 주제 및 생각 정리"
+  }
+]

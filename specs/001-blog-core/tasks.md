@@ -45,13 +45,13 @@
 
 **⚠️ CRITICAL**: No user story work can begin until this phase is complete
 
-- [ ] T013 Define Content Collections schema in src/content/config.ts with BlogPost schema using TypeScript types (title, description, pubDate, updatedDate, heroImage, category, tags, draft)
-- [ ] T014 [P] Create TypeScript types in src/types/index.ts (BlogPost, Category, Tag, Theme, SearchIndexEntry, PostListProps, PostDetailProps, SEOProps)
-- [ ] T015 [P] Create BaseLayout component in src/layouts/BaseLayout.astro with dark mode SSR flicker prevention script
-- [ ] T016 [P] Create global CSS file in src/styles/global.css with TailwindCSS directives (@tailwind base/components/utilities)
-- [ ] T017 Create categories.json in src/content/ with initial categories (Performance, TypeScript, General)
-- [ ] T018 [P] Create utility functions in src/utils/post.ts (slugify, calculateReadingTime, sortPostsByDate)
-- [ ] T019 [P] Create theme utility in src/utils/theme.ts for theme detection and localStorage management
+- [x] T013 Define Content Collections schema in src/content/config.ts with BlogPost schema using TypeScript types (title, description, pubDate, updatedDate, heroImage, category, tags, draft)
+- [x] T014 [P] Create TypeScript types in src/types/index.ts (BlogPost, Category, Tag, Theme, SearchIndexEntry, PostListProps, PostDetailProps, SEOProps)
+- [x] T015 [P] Create BaseLayout component in src/layouts/BaseLayout.astro with dark mode SSR flicker prevention script
+- [x] T016 [P] Create global CSS file in src/styles/global.css with TailwindCSS directives (@tailwind base/components/utilities)
+- [x] T017 Create categories.json in src/content/ with initial categories (Performance, TypeScript, General)
+- [x] T018 [P] Create utility functions in src/utils/post.ts (slugify, calculateReadingTime, sortPostsByDate)
+- [x] T019 [P] Create theme utility in src/utils/theme.ts for theme detection and localStorage management
 
 **Checkpoint**: Foundation ready - user story implementation can now begin in parallel
 
