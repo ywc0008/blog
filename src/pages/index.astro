@@ -28,17 +28,16 @@ const posts: BlogPost[] = allPosts
 const sortedPosts = sortPostsByDate(posts);
 ---
 
-<BaseLayout
-  title="홈 - Dev Blog"
-  description="개발 경험과 학습을 기록하는 공간"
->
+<BaseLayout>
   <div class="min-h-screen flex flex-col">
     <Header />
 
     <main class="flex-1">
       <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <section class="text-center mb-16">
-          <h1 class="text-4xl sm:text-5xl font-bold mb-4 text-gray-900 dark:text-gray-100">개발자 블로그</h1>
+          <h1 class="text-4xl sm:text-5xl font-bold mb-4 text-gray-900 dark:text-gray-100">
+            개발자 블로그
+          </h1>
           <p class="text-xl text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
             웹 개발, TypeScript, 성능 최적화에 대한 학습과 경험을 공유합니다.
           </p>
@@ -50,9 +49,13 @@ const sortedPosts = sortPostsByDate(posts);
             {sortedPosts.map((post) => <Card post={post} />)}
           </div>
 
-          {sortedPosts.length === 0 && (
-            <p class="text-center text-gray-500 dark:text-gray-400 py-12">아직 작성된 포스트가 없습니다.</p>
-          )}
+          {
+            sortedPosts.length === 0 && (
+              <p class="text-center text-gray-500 dark:text-gray-400 py-12">
+                아직 작성된 포스트가 없습니다.
+              </p>
+            )
+          }
         </section>
       </div>
     </main>
@@ -60,4 +63,3 @@ const sortedPosts = sortPostsByDate(posts);
     <Footer />
   </div>
 </BaseLayout>
-
