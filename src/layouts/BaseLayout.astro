@@ -43,21 +43,6 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
     <meta property="twitter:title" content={title} />
     <meta property="twitter:description" content={description} />
     {image && <meta property="twitter:image" content={new URL(image, Astro.site)} />}
-
-    <!-- Dark mode SSR flicker prevention -->
-    <script is:inline>
-      // This runs before page render to prevent flash of unstyled content
-      (function () {
-        const THEME_KEY = "theme";
-        const stored = localStorage.getItem(THEME_KEY);
-        const theme =
-          stored || (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
-
-        if (theme === "dark") {
-          document.documentElement.classList.add("dark");
-        }
-      })();
-    </script>
   </head>
   <body
     class="bg-white text-gray-900 dark:bg-gray-900 dark:text-gray-100 transition-colors duration-200"

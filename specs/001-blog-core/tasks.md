@@ -107,27 +107,7 @@
 
 ---
 
-## Phase 5: User Story 3 - 읽기 환경 커스터마이징 (Priority: P3)
-
-**Goal**: 사용자가 다크/라이트 모드를 전환하고, 설정이 localStorage에 저장되어 다음 방문 시에도 유지됨
-
-**Independent Test**: 테마 토글 버튼 클릭 → 다크/라이트 모드 전환 확인 → 페이지 새로고침 → 선택한 테마 유지 확인 → 댓글 섹션 테마 동기화 확인
-
-### Implementation for User Story 3
-
-- [ ] T044 [P] [US3] Create ThemeToggle component in src/components/react/ThemeToggle.tsx (useState for theme, useEffect to read localStorage, toggleTheme function to update DOM and localStorage)
-- [ ] T045 [US3] Integrate ThemeToggle into Header component with client:load directive
-- [ ] T046 [US3] Add Giscus theme synchronization to ThemeToggle (postMessage to iframe on theme change)
-- [ ] T047 [US3] Update Comments component to respect current theme (data-theme attribute from localStorage)
-- [ ] T048 [US3] Test theme persistence across page navigations
-- [ ] T049 [US3] Test system preference detection (prefers-color-scheme media query)
-- [ ] T050 [US3] Style ThemeToggle button with TailwindCSS (sun/moon icons, hover states)
-
-**Checkpoint**: All user stories 1, 2, 3 should now be independently functional
-
----
-
-## Phase 6: User Story 4 - SEO 및 공유 (Priority: P2)
+## Phase 5: User Story 4 - SEO 및 공유 (Priority: P2)
 
 **Goal**: 블로그 포스트가 검색 엔진에서 잘 노출되고, 소셜 미디어 공유 시 적절한 미리보기가 표시되며, RSS 피드를 제공함
 
@@ -135,41 +115,41 @@
 
 ### Implementation for User Story 4
 
-- [ ] T051 [P] [US4] Create SEO component in src/components/astro/SEO.astro (meta tags, OG tags, Twitter Card, canonical URL)
-- [ ] T052 [US4] Integrate SEO component into BaseLayout with props (title, description, image, type)
-- [ ] T053 [US4] Add SEO metadata to post list page (site title, site description)
-- [ ] T054 [US4] Add SEO metadata to post detail page (post title, post description, hero image)
-- [ ] T055 [P] [US4] Create RSS feed endpoint in src/pages/rss.xml.ts (use @astrojs/rss, fetch latest 20 posts, generate RSS 2.0 XML)
-- [ ] T056 [US4] Add RSS feed link to HTML head in BaseLayout
-- [ ] T057 [US4] Add sitemap.xml generation via @astrojs/sitemap integration (already configured in astro.config.mjs)
-- [ ] T058 [US4] Create robots.txt in public/ directory (allow all, sitemap URL)
-- [ ] T059 [US4] Test Open Graph tags with Facebook Sharing Debugger or similar tool
-- [ ] T060 [US4] Test Twitter Card with Twitter Card Validator
+- [ ] T044 [P] [US4] Create SEO component in src/components/astro/SEO.astro (meta tags, OG tags, Twitter Card, canonical URL)
+- [ ] T045 [US4] Integrate SEO component into BaseLayout with props (title, description, image, type)
+- [ ] T046 [US4] Add SEO metadata to post list page (site title, site description)
+- [ ] T047 [US4] Add SEO metadata to post detail page (post title, post description, hero image)
+- [ ] T048 [P] [US4] Create RSS feed endpoint in src/pages/rss.xml.ts (use @astrojs/rss, fetch latest 20 posts, generate RSS 2.0 XML)
+- [ ] T049 [US4] Add RSS feed link to HTML head in BaseLayout
+- [ ] T050 [US4] Add sitemap.xml generation via @astrojs/sitemap integration (already configured in astro.config.mjs)
+- [ ] T051 [US4] Create robots.txt in public/ directory (allow all, sitemap URL)
+- [ ] T052 [US4] Test Open Graph tags with Facebook Sharing Debugger or similar tool
+- [ ] T053 [US4] Test Twitter Card with Twitter Card Validator
 
 **Checkpoint**: All user stories should now be independently functional with full SEO support
 
 ---
 
-## Phase 7: Polish & Cross-Cutting Concerns
+## Phase 6: Polish & Cross-Cutting Concerns
 
 **Purpose**: Improvements that affect multiple user stories
 
-- [ ] T061 [P] Create Button component in src/components/react/Button.tsx (generic button with onClick, variants for primary/secondary/ghost)
-- [ ] T062 [P] Replace inline buttons with Button component across all pages
-- [ ] T063 [P] Add error handling to SearchModal (display message when fetch fails)
-- [ ] T064 [P] Add loading states to SearchModal (skeleton UI while fetching)
-- [ ] T065 [P] Add empty state to post list page ("No posts yet" message)
-- [ ] T066 [P] Add empty state to search results ("No results found" message)
-- [ ] T067 [P] Optimize images with Astro Image component (WebP conversion, lazy loading, srcset)
-- [ ] T068 [P] Add breadcrumb navigation to post detail page
-- [ ] T069 [P] Add "Back to top" button to long posts
-- [ ] T070 [P] Add social share buttons to post detail page (Twitter, Facebook, LinkedIn)
-- [ ] T071 Run ESLint and Prettier across all files (npm run lint && npm run format)
-- [ ] T072 Run TypeScript type checking (npm run astro check)
-- [ ] T073 Run production build and verify no errors (npm run build)
-- [ ] T074 Run Lighthouse audit on key pages (/, /posts/[slug]) and verify 95+ scores
-- [ ] T075 Test all user stories end-to-end (manual testing)
-- [ ] T076 Create quickstart documentation verification (follow quickstart.md steps to ensure accuracy)
+- [ ] T054 [P] Create Button component in src/components/react/Button.tsx (generic button with onClick, variants for primary/secondary/ghost)
+- [ ] T055 [P] Replace inline buttons with Button component across all pages
+- [ ] T056 [P] Add error handling to SearchModal (display message when fetch fails)
+- [ ] T057 [P] Add loading states to SearchModal (skeleton UI while fetching)
+- [ ] T058 [P] Add empty state to post list page ("No posts yet" message)
+- [ ] T059 [P] Add empty state to search results ("No results found" message)
+- [ ] T060 [P] Optimize images with Astro Image component (WebP conversion, lazy loading, srcset)
+- [ ] T061 [P] Add breadcrumb navigation to post detail page
+- [ ] T062 [P] Add "Back to top" button to long posts
+- [ ] T063 [P] Add social share buttons to post detail page (Twitter, Facebook, LinkedIn)
+- [ ] T064 Run ESLint and Prettier across all files (npm run lint && npm run format)
+- [ ] T065 Run TypeScript type checking (npm run astro check)
+- [ ] T066 Run production build and verify no errors (npm run build)
+- [ ] T067 Run Lighthouse audit on key pages (/, /posts/[slug]) and verify 95+ scores
+- [ ] T068 Test all user stories end-to-end (manual testing)
+- [ ] T069 Create quickstart documentation verification (follow quickstart.md steps to ensure accuracy)
 
 ---
 
@@ -179,32 +159,29 @@
 
 - **Setup (Phase 1)**: No dependencies - can start immediately
 - **Foundational (Phase 2)**: Depends on Setup completion - BLOCKS all user stories
-- **User Stories (Phase 3-6)**: All depend on Foundational phase completion
+- **User Stories (Phase 3-5)**: All depend on Foundational phase completion
   - User Story 1 (P1): Can start after Foundational - No dependencies on other stories
   - User Story 2 (P2): Can start after Foundational - Depends on User Story 1 for post list structure
-  - User Story 3 (P3): Can start after Foundational - No dependencies on other stories
   - User Story 4 (P2): Can start after Foundational - Depends on User Story 1 for post pages
-- **Polish (Phase 7)**: Depends on all user stories being feature-complete
+- **Polish (Phase 6)**: Depends on all user stories being feature-complete
 
 ### User Story Dependencies
 
 - **User Story 1 (P1)**: 독립적 - 다른 스토리 의존성 없음
 - **User Story 2 (P2)**: User Story 1에 약간 의존 (포스트 목록 구조 재사용), 하지만 독립적으로 테스트 가능
-- **User Story 3 (P3)**: 독립적 - 다른 스토리 의존성 없음
 - **User Story 4 (P2)**: User Story 1에 약간 의존 (포스트 페이지 존재 필요), 하지만 독립적으로 테스트 가능
 
 ### Within Each User Story
 
 - **User Story 1**: Card/Header/Footer (병렬) → 포스트 목록 페이지 → 포스트 상세 페이지 → TOC → Comments
 - **User Story 2**: SearchModal + search API (병렬) → 통합 → 카테고리/태그 페이지 (병렬) → 정렬/페이지네이션
-- **User Story 3**: ThemeToggle → 통합 → Giscus 동기화 → 테스트
 - **User Story 4**: SEO 컴포넌트 → 통합 → RSS/sitemap → robots.txt
 
 ### Parallel Opportunities
 
 - All Setup tasks marked [P] can run in parallel
 - All Foundational tasks marked [P] can run in parallel (within Phase 2)
-- Once Foundational phase completes, User Stories 1 and 3 can start in parallel (독립적)
+- Once Foundational phase completes, User Story 1 can start immediately (독립적)
 - Within each story, all tasks marked [P] can run in parallel
 - All Polish tasks marked [P] can run in parallel
 
@@ -245,12 +222,9 @@
 
 1. Complete Setup + Foundational → Foundation ready
 2. Add User Story 1 → Test independently → Deploy/Demo (MVP!)
-3. Add User Story 3 (다크 모드) → Test independently → Deploy/Demo
-4. Add User Story 2 (검색/필터링) → Test independently → Deploy/Demo
-5. Add User Story 4 (SEO) → Test independently → Deploy/Demo
-6. Add Polish tasks → Final deployment
-
-**Note**: User Story 3 (다크 모드)는 User Story 2보다 독립적이므로 먼저 구현해도 됨
+3. Add User Story 2 (검색/필터링) → Test independently → Deploy/Demo
+4. Add User Story 4 (SEO) → Test independently → Deploy/Demo
+5. Add Polish tasks → Final deployment
 
 ### Parallel Team Strategy
 
@@ -259,8 +233,7 @@ With multiple developers:
 1. Team completes Setup + Foundational together
 2. Once Foundational is done:
    - Developer A: User Story 1
-   - Developer B: User Story 3 (다크 모드)
-   - Developer C: User Story 4 (SEO, depends on US1 페이지 구조)
+   - Developer B: User Story 4 (SEO, depends on US1 페이지 구조)
 3. User Story 2 (검색) 추가 (US1 완료 후)
 4. Polish tasks 병렬 처리
 
@@ -274,11 +247,10 @@ With multiple developers:
 - Commit after each task or logical group
 - Stop at any checkpoint to validate story independently
 - Avoid: vague tasks, same file conflicts, cross-story dependencies that break independence
-- 총 작업 수: 76 tasks
+- 총 작업 수: 69 tasks
   - Setup: 12 tasks (removed: @astrojs/tailwind, @tanstack/react-query, zod, .storybook)
   - Foundational: 7 tasks
   - User Story 1: 13 tasks
   - User Story 2: 11 tasks
-  - User Story 3: 7 tasks
   - User Story 4: 10 tasks
-  - Polish: 16 tasks (removed: Storybook configuration and stories)
+  - Polish: 16 tasks (removed: Storybook configuration and stories, dark mode theme toggle)

@@ -7,7 +7,7 @@
 
 ## Summary
 
-Astro 5.x 기반 정적 블로그 구축. 핵심 요구사항은 포스트 읽기/검색/필터링, MDX 콘텐츠 렌더링, Shiki 코드 하이라이팅, Giscus 댓글, 다크 모드 지원, SEO 최적화입니다. 성능 목표는 LCP < 2.5s, FID < 100ms, CLS < 0.1이며, Lighthouse 95+ 점수를 달성해야 합니다. 컴포넌트 분류 규칙에 따라 상태/이벤트가 필요한 SearchModal, ThemeToggle, Button은 React(.tsx)로, 나머지는 Astro(.astro)로 구현합니다.
+Astro 5.x 기반 정적 블로그 구축. 핵심 요구사항은 포스트 읽기/검색/필터링, MDX 콘텐츠 렌더링, Shiki 코드 하이라이팅, Giscus 댓글, SEO 최적화입니다. 성능 목표는 LCP < 2.5s, FID < 100ms, CLS < 0.1이며, Lighthouse 95+ 점수를 달성해야 합니다. 컴포넌트 분류 규칙에 따라 상태/이벤트가 필요한 SearchModal, Button은 React(.tsx)로, 나머지는 Astro(.astro)로 구현합니다.
 
 ## Technical Context
 
@@ -26,14 +26,14 @@ Astro 5.x 기반 정적 블로그 구축. 핵심 요구사항은 포스트 읽�
 
 ### I. 성능 우선 (Performance First) ✅
 
-- ✅ **Astro Islands 아키텍처**: SearchModal, ThemeToggle, Button만 React로 hydrate. 나머지는 Astro로 0 bytes JS
+- ✅ **Astro Islands 아키텍처**: SearchModal, Button만 React로 hydrate. 나머지는 Astro로 0 bytes JS
 - ✅ **빌드타임 처리**: MDX 콘텐츠, Shiki 코드 하이라이팅, 이미지 최적화 모두 빌드 시점
 - ✅ **성능 목표**: LCP < 2.5s, FID < 100ms, CLS < 0.1, Lighthouse 95+ (spec SC-002와 일치)
 - ✅ **SSR 금지**: 정적 생성만 사용
 
 ### II. 컴포넌트 분류 규칙 (Component Classification Rule) ✅
 
-- ✅ **React (.tsx)**: SearchModal (검색 입력/결과 상태), ThemeToggle (테마 상태), Button (onClick 이벤트)
+- ✅ **React (.tsx)**: SearchModal (검색 입력/결과 상태), Button (onClick 이벤트)
 - ✅ **Astro (.astro)**: Comments (Giscus script 래퍼), Card, Header, Footer, BaseLayout
 - ✅ **판단 기준 준수**: "상태/이벤트 필요 여부"로 명확히 분류됨
 
@@ -46,7 +46,7 @@ Astro 5.x 기반 정적 블로그 구축. 핵심 요구사항은 포스트 읽�
 
 ### IV. 지연 로딩 및 코드 스플리팅 (Lazy Loading & Code Splitting) ✅
 
-- ✅ **컴포넌트 스플리팅**: SearchModal은 `client:idle`, ThemeToggle은 `client:load` 사용
+- ✅ **컴포넌트 스플리팅**: SearchModal은 `client:idle` 사용
 - ✅ **이미지 지연 로딩**: Astro Image의 `loading="lazy"` 속성
 - ✅ **라우트 기반 스플리팅**: Astro 자동 처리
 
@@ -118,8 +118,7 @@ src/
 │   └── index.ts         # 공유 타입 정의
 └── utils/
     ├── post.ts          # 포스트 유틸리티
-    ├── search.ts        # 검색 로직
-    └── theme.ts         # 테마 관리
+    └── search.ts        # 검색 로직
 
 public/
 ├── images/              # 정적 이미지

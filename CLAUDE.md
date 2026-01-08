@@ -26,6 +26,7 @@ TypeScript 5.x: Follow standard conventions
 
 - 001-blog-core: Added TypeScript 5.x + Astro 5.x, React 19.x, TailwindCSS 4.x, ESLint, Prettier, MDX, Shiki, Giscus
 - 001-blog-core: Removed unnecessary dependencies (@tanstack/react-query, zod, Storybook 8.x) and replaced Biome with ESLint+Prettier for minimal static blog setup
+- 001-blog-core: Removed dark mode theme toggle feature (ThemeToggle component, theme synchronization logic)
 
 <!-- MANUAL ADDITIONS START -->
 <!-- MANUAL ADDITIONS END -->
