@@ -65,19 +65,19 @@
 
 ### Implementation for User Story 1
 
-- [ ] T020 [P] [US1] Create sample MDX posts in src/content/blog/ (hello-world.mdx, example-with-code.mdx)
-- [ ] T021 [P] [US1] Create Card component in src/components/astro/Card.astro for displaying post previews
-- [ ] T022 [P] [US1] Create Header component in src/components/astro/Header.astro with site logo and navigation
-- [ ] T023 [P] [US1] Create Footer component in src/components/astro/Footer.astro with copyright and links
-- [ ] T024 [US1] Create post list page in src/pages/index.astro (fetch posts with getCollection, filter drafts, sort by pubDate, render Card components)
-- [ ] T025 [US1] Create dynamic post detail page in src/pages/posts/[slug].astro (getStaticPaths, render MDX content, display frontmatter)
-- [ ] T026 [P] [US1] Create TOC (Table of Contents) component in src/components/astro/TOC.astro (extract headings from MDX, generate navigation links)
-- [ ] T027 [US1] Integrate TOC into post detail page layout with smooth scroll behavior
-- [ ] T028 [P] [US1] Create Comments component in src/components/astro/Comments.astro (Giscus script wrapper with data-theme attribute)
-- [ ] T029 [US1] Add Comments component to post detail page footer
-- [ ] T030 [US1] Add reading time calculation to post detail page (use calculateReadingTime utility)
-- [ ] T031 [US1] Verify Shiki code highlighting works in MDX posts (test with TypeScript, JavaScript, Python code blocks)
-- [ ] T032 [US1] Add responsive design to post list and detail pages using TailwindCSS
+- [x] T020 [P] [US1] Create sample MDX posts in src/content/blog/ (hello-world.mdx, example-with-code.mdx)
+- [x] T021 [P] [US1] Create Card component in src/components/astro/Card.astro for displaying post previews
+- [x] T022 [P] [US1] Create Header component in src/components/astro/Header.astro with site logo and navigation
+- [x] T023 [P] [US1] Create Footer component in src/components/astro/Footer.astro with copyright and links
+- [x] T024 [US1] Create post list page in src/pages/index.astro (fetch posts with getCollection, filter drafts, sort by pubDate, render Card components)
+- [x] T025 [US1] Create dynamic post detail page in src/pages/posts/[slug].astro (getStaticPaths, render MDX content, display frontmatter)
+- [x] T026 [P] [US1] Create TOC (Table of Contents) component in src/components/astro/TOC.astro (extract headings from MDX, generate navigation links)
+- [x] T027 [US1] Integrate TOC into post detail page layout with smooth scroll behavior
+- [x] T028 [P] [US1] Create Comments component in src/components/astro/Comments.astro (Giscus script wrapper with data-theme attribute)
+- [x] T029 [US1] Add Comments component to post detail page footer
+- [x] T030 [US1] Add reading time calculation to post detail page (use calculateReadingTime utility)
+- [x] T031 [US1] Verify Shiki code highlighting works in MDX posts (test with TypeScript, JavaScript, Python code blocks)
+- [x] T032 [US1] Add responsive design to post list and detail pages using TailwindCSS
 
 **Checkpoint**: At this point, User Story 1 should be fully functional and testable independently (MVP complete!)
 

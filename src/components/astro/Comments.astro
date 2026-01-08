@@ -1,0 +1,51 @@
+---
+// Giscus configuration
+// TODO: Update these values with your actual repository details
+const repo = "username/repo"; // e.g., "octocat/Hello-World"
+const repoId = "R_kgDOxxxxxx"; // Get from https://giscus.app
+const category = "General";
+const categoryId = "DIC_kwDOxxxxxx"; // Get from https://giscus.app
+---
+
+<div class="mt-12 pt-8 border-t border-gray-200 dark:border-gray-800">
+  <h2 class="text-2xl font-bold mb-6 text-gray-900 dark:text-gray-100">댓글</h2>
+  <div
+    class="giscus"
+    data-repo={repo}
+    data-repo-id={repoId}
+    data-category={category}
+    data-category-id={categoryId}
+    data-mapping="pathname"
+    data-strict="0"
+    data-reactions-enabled="1"
+    data-emit-metadata="0"
+    data-input-position="top"
+    data-theme="preferred_color_scheme"
+    data-lang="ko"
+    data-loading="lazy"
+    crossorigin="anonymous"
+    async
+  ></div>
+</div>
+
+<script>
+  // Load Giscus script
+  const script = document.createElement("script");
+  script.src = "https://giscus.app/client.js";
+  script.setAttribute("data-repo", document.querySelector(".giscus")?.getAttribute("data-repo") || "");
+  script.setAttribute("data-repo-id", document.querySelector(".giscus")?.getAttribute("data-repo-id") || "");
+  script.setAttribute("data-category", document.querySelector(".giscus")?.getAttribute("data-category") || "");
+  script.setAttribute("data-category-id", document.querySelector(".giscus")?.getAttribute("data-category-id") || "");
+  script.setAttribute("data-mapping", "pathname");
+  script.setAttribute("data-strict", "0");
+  script.setAttribute("data-reactions-enabled", "1");
+  script.setAttribute("data-emit-metadata", "0");
+  script.setAttribute("data-input-position", "top");
+  script.setAttribute("data-theme", "preferred_color_scheme");
+  script.setAttribute("data-lang", "ko");
+  script.setAttribute("data-loading", "lazy");
+  script.crossOrigin = "anonymous";
+  script.async = true;
+
+  document.querySelector(".giscus")?.appendChild(script);
+</script>

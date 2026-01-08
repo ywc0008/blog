@@ -1,0 +1,108 @@
+---
+import { getCollection, type CollectionEntry } from "astro:content";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import Header from "../../components/astro/Header.astro";
+import Footer from "../../components/astro/Footer.astro";
+import TOC from "../../components/astro/TOC.astro";
+import Comments from "../../components/astro/Comments.astro";
+import { calculateReadingTime } from "../../utils/post";
+
+export async function getStaticPaths() {
+  const posts = await getCollection("blog");
+  return posts
+    .filter((post) => !post.data.draft)
+    .map((post) => ({
+      params: { slug: post.id },
+      props: { post },
+    }));
+}
+
+interface Props {
+  post: CollectionEntry<"blog">;
+}
+
+const { post } = Astro.props;
+const { Content, headings } = await post.render();
+
+// Calculate reading time from post body
+const readingTime = calculateReadingTime(post.body);
+
+const formattedDate = new Intl.DateTimeFormat("ko-KR", {
+  year: "numeric",
+  month: "long",
+  day: "numeric",
+}).format(new Date(post.data.pubDate));
+
+const formattedUpdatedDate = post.data.updatedDate
+  ? new Intl.DateTimeFormat("ko-KR", {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    }).format(new Date(post.data.updatedDate))
+  : null;
+---
+
+<BaseLayout
+  title={`${post.data.title} - Dev Blog`}
+  description={post.data.description}
+  image={post.data.heroImage}
+>
+  <div class="min-h-screen flex flex-col">
+    <Header />
+
+    <main class="flex-1">
+      <article class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <div class="flex gap-8">
+          <!-- Main content -->
+          <div class="flex-1 min-w-0">
+            <header class="mb-8">
+              <div class="flex flex-wrap items-center gap-3 text-sm mb-4">
+                <span class="px-2 py-1 bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 rounded font-medium">{post.data.category}</span>
+                <span class="text-gray-600 dark:text-gray-400">{formattedDate}</span>
+                <span class="text-gray-600 dark:text-gray-400">{readingTime}분 읽기</span>
+              </div>
+
+              <h1 class="text-4xl sm:text-5xl font-bold mb-4 text-gray-900 dark:text-gray-100">{post.data.title}</h1>
+              <p class="text-xl text-gray-600 dark:text-gray-300 mb-4">{post.data.description}</p>
+
+              {formattedUpdatedDate && (
+                <p class="text-sm text-gray-500 dark:text-gray-400 italic mb-4">
+                  마지막 업데이트: {formattedUpdatedDate}
+                </p>
+              )}
+
+              <div class="flex flex-wrap gap-2">
+                {post.data.tags.map((tag) => (
+                  <span class="px-3 py-1 bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 rounded">{tag}</span>
+                ))}
+              </div>
+            </header>
+
+            {post.data.heroImage && (
+              <img
+                src={post.data.heroImage}
+                alt={post.data.title}
+                class="w-full h-64 sm:h-96 object-cover rounded-lg mb-8"
+              />
+            )}
+
+            <div class="prose prose-lg max-w-none text-gray-800 dark:text-gray-200 leading-relaxed">
+              <Content />
+            </div>
+
+            <Comments />
+          </div>
+
+          <!-- Sidebar with TOC -->
+          {headings.length > 0 && (
+            <aside class="hidden lg:block w-64 flex-shrink-0">
+              <TOC headings={headings} />
+            </aside>
+          )}
+        </div>
+      </article>
+    </main>
+
+    <Footer />
+  </div>
+</BaseLayout>

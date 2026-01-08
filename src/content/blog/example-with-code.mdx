@@ -1,0 +1,103 @@
+---
+title: "TypeScript 타입 시스템 기초"
+description: "TypeScript의 기본 타입 시스템과 유틸리티 타입을 살펴봅니다."
+pubDate: 2024-01-05T00:00:00Z
+category: "typescript"
+tags: ["TypeScript", "타입시스템"]
+draft: false
+---
+
+TypeScript는 JavaScript에 정적 타입을 추가한 언어입니다. 이번 포스트에서는 기본적인 타입 시스템을 살펴보겠습니다.
+
+## 기본 타입
+
+TypeScript의 기본 타입들입니다:
+
+```typescript
+// 원시 타입
+const name: string = "John";
+const age: number = 30;
+const isActive: boolean = true;
+
+// 배열
+const numbers: number[] = [1, 2, 3];
+const names: Array<string> = ["Alice", "Bob"];
+
+// 객체
+interface User {
+  id: number;
+  name: string;
+  email?: string; // 선택적 프로퍼티
+}
+
+const user: User = {
+  id: 1,
+  name: "John Doe",
+};
+```
+
+## 유틸리티 타입
+
+TypeScript는 타입 변환을 위한 여러 유틸리티 타입을 제공합니다:
+
+```typescript
+interface Product {
+  id: number;
+  name: string;
+  price: number;
+  description: string;
+}
+
+// Partial - 모든 프로퍼티를 선택적으로
+type PartialProduct = Partial<Product>;
+
+// Pick - 특정 프로퍼티만 선택
+type ProductPreview = Pick<Product, "id" | "name" | "price">;
+
+// Omit - 특정 프로퍼티 제외
+type ProductWithoutDescription = Omit<Product, "description">;
+```
+
+## 제네릭 함수
+
+제네릭을 사용하면 재사용 가능한 컴포넌트를 만들 수 있습니다:
+
+```typescript
+function identity<T>(arg: T): T {
+  return arg;
+}
+
+// 타입 추론
+const result1 = identity("hello"); // string
+const result2 = identity(42); // number
+
+// 배열 필터링 예제
+function filterArray<T>(array: T[], predicate: (item: T) => boolean): T[] {
+  return array.filter(predicate);
+}
+
+const numbers = [1, 2, 3, 4, 5];
+const evens = filterArray(numbers, (n) => n % 2 === 0);
+// [2, 4]
+```
+
+## Python 비교
+
+참고로 Python에서도 타입 힌트를 사용할 수 있습니다:
+
+```python
+from typing import List, Optional
+
+def greet(name: str) -> str:
+    return f"Hello, {name}!"
+
+def find_item(items: List[str], target: str) -> Optional[int]:
+    try:
+        return items.index(target)
+    except ValueError:
+        return None
+```
+
+## 마치며
+
+TypeScript의 타입 시스템은 코드의 안정성을 크게 향상시킵니다. 다음 포스트에서는 고급 타입 패턴을 다뤄보겠습니다.
