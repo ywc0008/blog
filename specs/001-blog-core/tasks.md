@@ -24,21 +24,18 @@
 
 **Purpose**: Project initialization and basic structure
 
-- [ ] T001 Create Astro project with TypeScript strict mode
-- [ ] T002 Install core dependencies: @astrojs/react, @astrojs/tailwind, @astrojs/mdx, @astrojs/sitemap, @astrojs/rss
-- [ ] T003 [P] Install React 19.x and React DOM
-- [ ] T004 [P] Install TailwindCSS 4.x and configure dark mode
-- [ ] T005 [P] Install Biome for linting and formatting
-- [ ] T006 [P] Install @tanstack/react-query for client-side data fetching
-- [ ] T007 [P] Install zod for Content Collections schema validation
-- [ ] T008 Create project directory structure: src/{components/{react,astro},content/blog,layouts,pages,styles,types,utils}
-- [ ] T009 Create public/ directory for static assets
-- [ ] T010 [P] Create .storybook/ directory for Storybook configuration
-- [ ] T011 Configure astro.config.mjs with integrations (React, Tailwind, MDX, Sitemap) and Shiki settings
-- [ ] T012 [P] Configure tsconfig.json for strict TypeScript mode
-- [ ] T013 [P] Configure tailwind.config.mjs with dark mode class strategy
-- [ ] T014 [P] Configure biome.json for linting and formatting rules
-- [ ] T015 [P] Create .gitignore with Node.js, Astro, and IDE entries
+- [x] T001 Create Astro project with TypeScript strict mode
+- [x] T002 Install core dependencies: @astrojs/react, @astrojs/mdx, @astrojs/sitemap, @astrojs/rss
+- [x] T003 [P] Install React 19.x and React DOM
+- [x] T004 [P] Configure TailwindCSS 4.x (already installed) with dark mode
+- [x] T005 [P] Install ESLint and Prettier for linting and formatting
+- [x] T006 Create project directory structure: src/{components/{react,astro},content/blog,layouts,pages,styles,types,utils}
+- [x] T007 Create public/ directory for static assets
+- [x] T008 Configure astro.config.mjs with integrations (React, MDX, Sitemap) and Shiki settings
+- [x] T009 [P] Configure tsconfig.json for strict TypeScript mode
+- [x] T010 [P] Configure tailwind.config.mjs with dark mode class strategy
+- [x] T011 [P] Configure .eslintrc.cjs and .prettierrc for linting and formatting rules
+- [x] T012 [P] Create .gitignore with Node.js, Astro, and IDE entries
 
 ---
 
@@ -48,13 +45,13 @@
 
 **⚠️ CRITICAL**: No user story work can begin until this phase is complete
 
-- [ ] T016 Define Content Collections schema in src/content/config.ts with BlogPost schema (title, description, pubDate, updatedDate, heroImage, category, tags, draft)
-- [ ] T017 [P] Create TypeScript types in src/types/index.ts (BlogPost, Category, Tag, Theme, SearchIndexEntry, PostListProps, PostDetailProps, SEOProps)
-- [ ] T018 [P] Create BaseLayout component in src/layouts/BaseLayout.astro with dark mode SSR flicker prevention script
-- [ ] T019 [P] Create global CSS file in src/styles/global.css with TailwindCSS directives (@tailwind base/components/utilities)
-- [ ] T020 Create categories.json in src/content/ with initial categories (Performance, TypeScript, General)
-- [ ] T021 [P] Create utility functions in src/utils/post.ts (slugify, calculateReadingTime, sortPostsByDate)
-- [ ] T022 [P] Create theme utility in src/utils/theme.ts for theme detection and localStorage management
+- [ ] T013 Define Content Collections schema in src/content/config.ts with BlogPost schema using TypeScript types (title, description, pubDate, updatedDate, heroImage, category, tags, draft)
+- [ ] T014 [P] Create TypeScript types in src/types/index.ts (BlogPost, Category, Tag, Theme, SearchIndexEntry, PostListProps, PostDetailProps, SEOProps)
+- [ ] T015 [P] Create BaseLayout component in src/layouts/BaseLayout.astro with dark mode SSR flicker prevention script
+- [ ] T016 [P] Create global CSS file in src/styles/global.css with TailwindCSS directives (@tailwind base/components/utilities)
+- [ ] T017 Create categories.json in src/content/ with initial categories (Performance, TypeScript, General)
+- [ ] T018 [P] Create utility functions in src/utils/post.ts (slugify, calculateReadingTime, sortPostsByDate)
+- [ ] T019 [P] Create theme utility in src/utils/theme.ts for theme detection and localStorage management
 
 **Checkpoint**: Foundation ready - user story implementation can now begin in parallel
 
@@ -68,19 +65,19 @@
 
 ### Implementation for User Story 1
 
-- [ ] T023 [P] [US1] Create sample MDX posts in src/content/blog/ (hello-world.mdx, example-with-code.mdx)
-- [ ] T024 [P] [US1] Create Card component in src/components/astro/Card.astro for displaying post previews
-- [ ] T025 [P] [US1] Create Header component in src/components/astro/Header.astro with site logo and navigation
-- [ ] T026 [P] [US1] Create Footer component in src/components/astro/Footer.astro with copyright and links
-- [ ] T027 [US1] Create post list page in src/pages/index.astro (fetch posts with getCollection, filter drafts, sort by pubDate, render Card components)
-- [ ] T028 [US1] Create dynamic post detail page in src/pages/posts/[slug].astro (getStaticPaths, render MDX content, display frontmatter)
-- [ ] T029 [P] [US1] Create TOC (Table of Contents) component in src/components/astro/TOC.astro (extract headings from MDX, generate navigation links)
-- [ ] T030 [US1] Integrate TOC into post detail page layout with smooth scroll behavior
-- [ ] T031 [P] [US1] Create Comments component in src/components/astro/Comments.astro (Giscus script wrapper with data-theme attribute)
-- [ ] T032 [US1] Add Comments component to post detail page footer
-- [ ] T033 [US1] Add reading time calculation to post detail page (use calculateReadingTime utility)
-- [ ] T034 [US1] Verify Shiki code highlighting works in MDX posts (test with TypeScript, JavaScript, Python code blocks)
-- [ ] T035 [US1] Add responsive design to post list and detail pages using TailwindCSS
+- [ ] T020 [P] [US1] Create sample MDX posts in src/content/blog/ (hello-world.mdx, example-with-code.mdx)
+- [ ] T021 [P] [US1] Create Card component in src/components/astro/Card.astro for displaying post previews
+- [ ] T022 [P] [US1] Create Header component in src/components/astro/Header.astro with site logo and navigation
+- [ ] T023 [P] [US1] Create Footer component in src/components/astro/Footer.astro with copyright and links
+- [ ] T024 [US1] Create post list page in src/pages/index.astro (fetch posts with getCollection, filter drafts, sort by pubDate, render Card components)
+- [ ] T025 [US1] Create dynamic post detail page in src/pages/posts/[slug].astro (getStaticPaths, render MDX content, display frontmatter)
+- [ ] T026 [P] [US1] Create TOC (Table of Contents) component in src/components/astro/TOC.astro (extract headings from MDX, generate navigation links)
+- [ ] T027 [US1] Integrate TOC into post detail page layout with smooth scroll behavior
+- [ ] T028 [P] [US1] Create Comments component in src/components/astro/Comments.astro (Giscus script wrapper with data-theme attribute)
+- [ ] T029 [US1] Add Comments component to post detail page footer
+- [ ] T030 [US1] Add reading time calculation to post detail page (use calculateReadingTime utility)
+- [ ] T031 [US1] Verify Shiki code highlighting works in MDX posts (test with TypeScript, JavaScript, Python code blocks)
+- [ ] T032 [US1] Add responsive design to post list and detail pages using TailwindCSS
 
 **Checkpoint**: At this point, User Story 1 should be fully functional and testable independently (MVP complete!)
 
@@ -94,17 +91,17 @@
 
 ### Implementation for User Story 2
 
-- [ ] T036 [P] [US2] Create search index API endpoint in src/pages/api/posts.json.ts (export GET function, fetch all non-draft posts, return JSON with slug/title/description/category/tags/pubDate)
-- [ ] T037 [P] [US2] Create search utility in src/utils/search.ts (fuzzy search logic, filter by query, highlight matches)
-- [ ] T038 [P] [US2] Create SearchModal component in src/components/react/SearchModal.tsx (React Query to fetch /api/posts.json, search input state, filtered results rendering)
-- [ ] T039 [US2] Add keyboard listener for Cmd+K/Ctrl+K to open SearchModal (global event listener in BaseLayout)
-- [ ] T040 [US2] Integrate SearchModal into BaseLayout with client:idle directive
-- [ ] T041 [P] [US2] Create category filter page in src/pages/categories/[category].astro (getStaticPaths from categories.json, filter posts by category)
-- [ ] T042 [P] [US2] Create tag filter page in src/pages/tags/[tag].astro (getStaticPaths from all tags, filter posts by tag)
-- [ ] T043 [US2] Add category and tag links to Card component
-- [ ] T044 [US2] Add sorting controls to post list page (latest/oldest toggle, update getCollection sort)
-- [ ] T045 [US2] Add pagination to post list page (10 posts per page, page navigation)
-- [ ] T046 [US2] Style SearchModal with TailwindCSS (modal overlay, search input, results list)
+- [ ] T033 [P] [US2] Create search index API endpoint in src/pages/api/posts.json.ts (export GET function, fetch all non-draft posts, return JSON with slug/title/description/category/tags/pubDate)
+- [ ] T034 [P] [US2] Create search utility in src/utils/search.ts (fuzzy search logic, filter by query, highlight matches)
+- [ ] T035 [P] [US2] Create SearchModal component in src/components/react/SearchModal.tsx (fetch /api/posts.json, search input state, filtered results rendering)
+- [ ] T036 [US2] Add keyboard listener for Cmd+K/Ctrl+K to open SearchModal (global event listener in BaseLayout)
+- [ ] T037 [US2] Integrate SearchModal into BaseLayout with client:idle directive
+- [ ] T038 [P] [US2] Create category filter page in src/pages/categories/[category].astro (getStaticPaths from categories.json, filter posts by category)
+- [ ] T039 [P] [US2] Create tag filter page in src/pages/tags/[tag].astro (getStaticPaths from all tags, filter posts by tag)
+- [ ] T040 [US2] Add category and tag links to Card component
+- [ ] T041 [US2] Add sorting controls to post list page (latest/oldest toggle, update getCollection sort)
+- [ ] T042 [US2] Add pagination to post list page (10 posts per page, page navigation)
+- [ ] T043 [US2] Style SearchModal with TailwindCSS (modal overlay, search input, results list)
 
 **Checkpoint**: At this point, User Stories 1 AND 2 should both work independently
 
@@ -118,13 +115,13 @@
 
 ### Implementation for User Story 3
 
-- [ ] T047 [P] [US3] Create ThemeToggle component in src/components/react/ThemeToggle.tsx (useState for theme, useEffect to read localStorage, toggleTheme function to update DOM and localStorage)
-- [ ] T048 [US3] Integrate ThemeToggle into Header component with client:load directive
-- [ ] T049 [US3] Add Giscus theme synchronization to ThemeToggle (postMessage to iframe on theme change)
-- [ ] T050 [US3] Update Comments component to respect current theme (data-theme attribute from localStorage)
-- [ ] T051 [US3] Test theme persistence across page navigations
-- [ ] T052 [US3] Test system preference detection (prefers-color-scheme media query)
-- [ ] T053 [US3] Style ThemeToggle button with TailwindCSS (sun/moon icons, hover states)
+- [ ] T044 [P] [US3] Create ThemeToggle component in src/components/react/ThemeToggle.tsx (useState for theme, useEffect to read localStorage, toggleTheme function to update DOM and localStorage)
+- [ ] T045 [US3] Integrate ThemeToggle into Header component with client:load directive
+- [ ] T046 [US3] Add Giscus theme synchronization to ThemeToggle (postMessage to iframe on theme change)
+- [ ] T047 [US3] Update Comments component to respect current theme (data-theme attribute from localStorage)
+- [ ] T048 [US3] Test theme persistence across page navigations
+- [ ] T049 [US3] Test system preference detection (prefers-color-scheme media query)
+- [ ] T050 [US3] Style ThemeToggle button with TailwindCSS (sun/moon icons, hover states)
 
 **Checkpoint**: All user stories 1, 2, 3 should now be independently functional
 
@@ -138,16 +135,16 @@
 
 ### Implementation for User Story 4
 
-- [ ] T054 [P] [US4] Create SEO component in src/components/astro/SEO.astro (meta tags, OG tags, Twitter Card, canonical URL)
-- [ ] T055 [US4] Integrate SEO component into BaseLayout with props (title, description, image, type)
-- [ ] T056 [US4] Add SEO metadata to post list page (site title, site description)
-- [ ] T057 [US4] Add SEO metadata to post detail page (post title, post description, hero image)
-- [ ] T058 [P] [US4] Create RSS feed endpoint in src/pages/rss.xml.ts (use @astrojs/rss, fetch latest 20 posts, generate RSS 2.0 XML)
-- [ ] T059 [US4] Add RSS feed link to HTML head in BaseLayout
-- [ ] T060 [US4] Add sitemap.xml generation via @astrojs/sitemap integration (already configured in astro.config.mjs)
-- [ ] T061 [US4] Create robots.txt in public/ directory (allow all, sitemap URL)
-- [ ] T062 [US4] Test Open Graph tags with Facebook Sharing Debugger or similar tool
-- [ ] T063 [US4] Test Twitter Card with Twitter Card Validator
+- [ ] T051 [P] [US4] Create SEO component in src/components/astro/SEO.astro (meta tags, OG tags, Twitter Card, canonical URL)
+- [ ] T052 [US4] Integrate SEO component into BaseLayout with props (title, description, image, type)
+- [ ] T053 [US4] Add SEO metadata to post list page (site title, site description)
+- [ ] T054 [US4] Add SEO metadata to post detail page (post title, post description, hero image)
+- [ ] T055 [P] [US4] Create RSS feed endpoint in src/pages/rss.xml.ts (use @astrojs/rss, fetch latest 20 posts, generate RSS 2.0 XML)
+- [ ] T056 [US4] Add RSS feed link to HTML head in BaseLayout
+- [ ] T057 [US4] Add sitemap.xml generation via @astrojs/sitemap integration (already configured in astro.config.mjs)
+- [ ] T058 [US4] Create robots.txt in public/ directory (allow all, sitemap URL)
+- [ ] T059 [US4] Test Open Graph tags with Facebook Sharing Debugger or similar tool
+- [ ] T060 [US4] Test Twitter Card with Twitter Card Validator
 
 **Checkpoint**: All user stories should now be independently functional with full SEO support
 
@@ -157,26 +154,22 @@
 
 **Purpose**: Improvements that affect multiple user stories
 
-- [ ] T064 [P] Create Button component in src/components/react/Button.tsx (generic button with onClick, variants for primary/secondary/ghost)
-- [ ] T065 [P] Replace inline buttons with Button component across all pages
-- [ ] T066 [P] Add error handling to SearchModal (display message when fetch fails)
-- [ ] T067 [P] Add loading states to SearchModal (skeleton UI while fetching)
-- [ ] T068 [P] Add empty state to post list page ("No posts yet" message)
-- [ ] T069 [P] Add empty state to search results ("No results found" message)
-- [ ] T070 [P] Optimize images with Astro Image component (WebP conversion, lazy loading, srcset)
-- [ ] T071 [P] Add breadcrumb navigation to post detail page
-- [ ] T072 [P] Add "Back to top" button to long posts
-- [ ] T073 [P] Add social share buttons to post detail page (Twitter, Facebook, LinkedIn)
-- [ ] T074 [P] Configure Storybook for React components (ThemeToggle, SearchModal, Button)
-- [ ] T075 [P] Write Storybook stories for ThemeToggle component in stories/ThemeToggle.stories.tsx
-- [ ] T076 [P] Write Storybook stories for SearchModal component in stories/SearchModal.stories.tsx
-- [ ] T077 [P] Write Storybook stories for Button component in stories/Button.stories.tsx
-- [ ] T078 Run Biome linting and formatting across all files (npx biome check --write ./src)
-- [ ] T079 Run TypeScript type checking (npm run astro check)
-- [ ] T080 Run production build and verify no errors (npm run build)
-- [ ] T081 Run Lighthouse audit on key pages (/, /posts/[slug]) and verify 95+ scores
-- [ ] T082 Test all user stories end-to-end (manual or automated with Playwright)
-- [ ] T083 Create quickstart documentation verification (follow quickstart.md steps to ensure accuracy)
+- [ ] T061 [P] Create Button component in src/components/react/Button.tsx (generic button with onClick, variants for primary/secondary/ghost)
+- [ ] T062 [P] Replace inline buttons with Button component across all pages
+- [ ] T063 [P] Add error handling to SearchModal (display message when fetch fails)
+- [ ] T064 [P] Add loading states to SearchModal (skeleton UI while fetching)
+- [ ] T065 [P] Add empty state to post list page ("No posts yet" message)
+- [ ] T066 [P] Add empty state to search results ("No results found" message)
+- [ ] T067 [P] Optimize images with Astro Image component (WebP conversion, lazy loading, srcset)
+- [ ] T068 [P] Add breadcrumb navigation to post detail page
+- [ ] T069 [P] Add "Back to top" button to long posts
+- [ ] T070 [P] Add social share buttons to post detail page (Twitter, Facebook, LinkedIn)
+- [ ] T071 Run ESLint and Prettier across all files (npm run lint && npm run format)
+- [ ] T072 Run TypeScript type checking (npm run astro check)
+- [ ] T073 Run production build and verify no errors (npm run build)
+- [ ] T074 Run Lighthouse audit on key pages (/, /posts/[slug]) and verify 95+ scores
+- [ ] T075 Test all user stories end-to-end (manual testing)
+- [ ] T076 Create quickstart documentation verification (follow quickstart.md steps to ensure accuracy)
 
 ---
 
@@ -281,11 +274,11 @@ With multiple developers:
 - Commit after each task or logical group
 - Stop at any checkpoint to validate story independently
 - Avoid: vague tasks, same file conflicts, cross-story dependencies that break independence
-- 총 작업 수: 83 tasks
-  - Setup: 15 tasks
+- 총 작업 수: 76 tasks
+  - Setup: 12 tasks (removed: @astrojs/tailwind, @tanstack/react-query, zod, .storybook)
   - Foundational: 7 tasks
   - User Story 1: 13 tasks
   - User Story 2: 11 tasks
   - User Story 3: 7 tasks
   - User Story 4: 10 tasks
-  - Polish: 20 tasks
+  - Polish: 16 tasks (removed: Storybook configuration and stories)

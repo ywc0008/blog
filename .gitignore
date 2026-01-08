@@ -22,3 +22,15 @@ pnpm-debug.log*
 
 # jetbrains setting folder
 .idea/
+
+# VSCode
+.vscode/settings.json
+.vscode/launch.json
+
+# pnpm
+.pnpm-store/
+
+# temporary files
+*.swp
+*.swo
+*~

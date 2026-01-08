@@ -12,13 +12,12 @@ Astro 5.x 기반 정적 블로그 구축. 핵심 요구사항은 포스트 읽�
 ## Technical Context
 
 **Language/Version**: TypeScript 5.x
-**Primary Dependencies**: Astro 5.x, React 19.x, TailwindCSS 4.x, Storybook 8.x, Biome, MDX, Shiki, Giscus
+**Primary Dependencies**: Astro 5.x, React 19.x, TailwindCSS 4.x, ESLint, Prettier, MDX, Shiki, Giscus
 **Storage**: File-based (MDX files in Git repository)
-**Testing**: Vitest (unit), Playwright (E2E), Storybook (component)
 **Target Platform**: Static site (deployed to CDN, e.g., Vercel, Netlify, Cloudflare Pages)
 **Project Type**: Single web project (static site generator)
 **Performance Goals**: LCP < 2.5s, FID < 100ms, CLS < 0.1, Lighthouse 95+, 검색 응답 < 200ms
-**Constraints**: 0 bytes JavaScript 기본, SSR 금지, 빌드타임 처리 우선, React Query만 사용 (상태 관리 라이브러리 금지)
+**Constraints**: 0 bytes JavaScript 기본, SSR 금지, 빌드타임 처리 우선, 상태 관리 라이브러리 금지
 **Scale/Scope**: 개인 블로그 (~100 포스트 예상), 동시 접속자 < 1000명, 모바일 반응형
 
 ## Constitution Check
@@ -60,13 +59,13 @@ Astro 5.x 기반 정적 블로그 구축. 핵심 요구사항은 포스트 읽�
 ### VI. 데이터 페칭 및 캐싱 (Data Fetching & Caching) ✅
 
 - ✅ **빌드타임 페칭**: Astro 컴포넌트에서 포스트 메타데이터 로드
-- ✅ **클라이언트 사이드**: 검색 기능에만 React Query 사용 (포스트 목록 필터링)
-- ⚠️ **주의사항**: React Query는 검색 모달에서만 사용. 대부분의 데이터는 빌드타임에 처리됨
+- ✅ **클라이언트 사이드**: 검색 기능에만 fetch API 사용 (포스트 목록 필터링)
+- ⚠️ **주의사항**: 클라이언트 데이터 페칭은 검색 모달에서만 사용. 대부분의 데이터는 빌드타임에 처리됨
 
 ### 기술 제약사항 준수 ✅
 
-- ✅ **승인된 스택**: Astro 5.x, React 19.x, TypeScript 5.x, TailwindCSS 4.x, Storybook 8.x, Biome, MDX, Shiki, Giscus 모두 사용
-- ✅ **금지 기술 회피**: SSR 미사용, 자체 댓글 시스템 미구축, Redux/MobX/Zustand 미사용, CSS 프레임워크 혼용 없음
+- ✅ **승인된 스택**: Astro 5.x, React 19.x, TypeScript 5.x, TailwindCSS 4.x, ESLint, Prettier, MDX, Shiki, Giscus 모두 사용
+- ✅ **금지 기술 회피**: SSR 미사용, 자체 댓글 시스템 미구축, Redux/MobX/Zustand 미사용, CSS 프레임워크 혼용 없음, 불필요한 의존성(@tanstack/react-query, zod) 제거
 
 **GATE 결과**: ✅ 모든 헌법 원칙 준수. Phase 0 진행 가능.
 
@@ -125,9 +124,6 @@ src/
 public/
 ├── images/              # 정적 이미지
 └── robots.txt
-
-.storybook/              # Storybook 설정
-stories/                 # 컴포넌트 스토리
 ```
 
 **Structure Decision**: Astro의 기본 단일 프로젝트 구조 사용. `src/components/`를 `react/`와 `astro/`로 분리하여 컴포넌트 분류 규칙을 명확히 합니다. Content Collections API를 사용하여 MDX 포스트를 타입 안전하게 관리합니다.
