@@ -7,7 +7,7 @@ import sitemap from "@astrojs/sitemap";
 
 // https://astro.build/config
 export default defineConfig({
-  site: "https://example.com", // TODO: Update with your actual domain
+  site: "https://ywc.life",
   integrations: [
     react(),
     mdx(),
