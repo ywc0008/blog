@@ -6,16 +6,13 @@ const navItems = [
 ];
 ---
 
-<header
-  class="sticky top-0 z-50 bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800 shadow-sm"
->
+<header class="sticky top-0 z-50 bg-white border-b border-gray-200 shadow-sm">
   <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
     <div class="flex items-center justify-between h-16">
       <a
         href="/"
-        class="flex items-center gap-2 text-xl font-bold text-gray-900 dark:text-gray-100 no-underline hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
+        class="flex items-center gap-2 text-xl font-bold text-gray-900 no-underline hover:text-blue-600 transition-colors"
       >
-        <span class="text-2xl"></span>
         <span>ywc.life</span>
       </a>
 
@@ -26,7 +23,7 @@ const navItems = [
               <li>
                 <a
                   href={item.href}
-                  class="text-gray-700 dark:text-gray-300 no-underline hover:text-blue-600 dark:hover:text-blue-400 font-medium transition-colors"
+                  class="text-gray-700 no-underline hover:text-blue-600 font-medium transition-colors"
                 >
                   {item.label}
                 </a>
