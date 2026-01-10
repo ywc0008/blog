@@ -8,6 +8,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - **UI**: React 19.x (Islands Architecture - minimal interactive components only)
 - **Styling**: TailwindCSS 4.x (manual integration via @tailwindcss/vite, NO @astrojs/tailwind)
 - **Content**: MDX with Content Collections API
+- **Image Processing**: Sharp 0.34.x (REQUIRED for Astro Image optimization)
 - **Code Highlighting**: Shiki (build-time)
 - **Comments**: Giscus (GitHub Discussions)
 - **TypeScript**: 5.x with strict mode
@@ -21,10 +22,8 @@ pnpm build              # Production build to ./dist/
 pnpm preview            # Preview production build
 
 # Code Quality
-pnpm lint               # Run ESLint
-pnpm lint:fix           # Fix ESLint issues
+pnpm lint               # Run ESLint with auto-fix
 pnpm format             # Format with Prettier
-pnpm format:check       # Check Prettier formatting
 pnpm check              # TypeScript type checking (astro check)
 ```
 
@@ -81,11 +80,13 @@ draft: boolean
 
 ### Image Optimization
 
+- **CRITICAL**: Sharp must be installed as a dependency (`pnpm add sharp`)
 - **Astro Image Component**: Used in Card.astro and [slug].astro
 - **Storage**: `src/assets/posts/[post-name]/` (NOT `public/`)
 - **Type**: `heroImage: image().optional()` in Content Collections schema returns `ImageMetadata`
 - **Auto-optimization**: JPG/PNG → WebP, responsive srcset, lazy loading
 - **BlogPost Type**: `heroImage?: ImageMetadata` in `src/types/index.ts`
+- **Vercel Deployment**: Without Sharp, builds will fail with MissingSharp error
 
 ### Key Files
 
@@ -96,7 +97,11 @@ draft: boolean
 - `src/layouts/BaseLayout.astro`: Base HTML structure, SEO component
 - `src/components/astro/SEO.astro`: Reusable SEO meta tags (OG, Twitter Card)
 - `src/components/astro/Card.astro`: Blog post card with hero image, category, tags links
+- `src/components/astro/Header.astro`: Navigation with Development/Library categories
+- `src/components/astro/Footer.astro`: Footer with RSS and GitHub links
 - `src/pages/posts/[slug].astro`: Post detail page with hero image display
+- `src/pages/404.astro`: Custom 404 page with recent posts suggestions
+- `.nvmrc`: Node 20 for Vercel deployment
 
 ## Development Constraints
 
@@ -113,11 +118,13 @@ draft: boolean
 Project is configured for Vercel deployment:
 
 - **Site URL**: https://ywc.life (set in `astro.config.mjs`)
+- **Node Version**: 20 (specified in `.nvmrc`)
 - **Build Command**: `pnpm build`
 - **Output Directory**: `dist`
 - **Install Command**: `pnpm install`
+- **CRITICAL**: Sharp must be in dependencies for image optimization to work
 
-Optional `vercel.json`:
+`vercel.json`:
 
 ```json
 {
@@ -141,11 +148,13 @@ const categoryId = "DIC_kwDOxxxxxx"; // Get from https://giscus.app
 
 Comments will not work until these values are configured.
 
-## Known Issues
+## Known Issues & Important Notes
 
+- **Sharp Dependency**: MUST be installed for Astro Image. Vercel builds fail without it (MissingSharp error)
 - React 19 with @astrojs/react may have compatibility issues with hooks
 - Search/filter features are postponed until React compatibility is resolved
 - Giscus comments require manual configuration before deployment
+- **Git Commits**: DO NOT add "Co-Authored-By: Claude Sonnet 4.5" to commit messages
 
 <!-- MANUAL ADDITIONS START -->
 <!-- MANUAL ADDITIONS END -->
