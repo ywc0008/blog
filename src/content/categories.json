@@ -1,17 +1,27 @@
 [
   {
+    "name": "Development",
+    "slug": "development",
+    "description": "웹 개발, 프론트엔드/백엔드 기술과 개발 경험"
+  },
+  {
+    "name": "Library",
+    "slug": "library",
+    "description": "유용한 라이브러리 소개 및 사용법 리뷰"
+  },
+  {
+    "name": "Projects",
+    "slug": "projects",
+    "description": "사이드 프로젝트와 작업물 소개"
+  },
+  {
     "name": "Performance",
     "slug": "performance",
-    "description": "웹 성능 최적화 및 관련 기술"
+    "description": "웹 성능 최적화 및 모범 사례"
   },
   {
     "name": "TypeScript",
     "slug": "typescript",
     "description": "TypeScript 개발 및 타입 시스템"
-  },
-  {
-    "name": "General",
-    "slug": "general",
-    "description": "일반 개발 주제 및 생각 정리"
   }
 ]

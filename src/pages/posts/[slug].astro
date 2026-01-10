@@ -1,4 +1,5 @@
 ---
+import { Image } from "astro:assets";
 import { getCollection, type CollectionEntry } from "astro:content";
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import Header from "../../components/astro/Header.astro";
@@ -45,7 +46,7 @@ const formattedUpdatedDate = post.data.updatedDate
 <BaseLayout
   title={`${post.data.title} - ywc.life`}
   description={post.data.description}
-  image={post.data.heroImage}
+  image={post.data.heroImage?.src}
   type="article"
   article={{
     publishedTime: post.data.pubDate.toISOString(),
@@ -72,7 +73,7 @@ const formattedUpdatedDate = post.data.updatedDate
               </div>
 
               <h1 class="text-4xl sm:text-5xl font-bold mb-4 text-gray-900">{post.data.title}</h1>
-              <p class="text-xl text-gray-600 mb-4">{post.data.description}</p>
+              <!-- <p class="text-xl text-gray-600 mb-4">{post.data.description}</p> -->
 
               {
                 formattedUpdatedDate && (
@@ -93,10 +94,14 @@ const formattedUpdatedDate = post.data.updatedDate
 
             {
               post.data.heroImage && (
-                <img
+                <Image
                   src={post.data.heroImage}
                   alt={post.data.title}
+                  width={1200}
+                  height={600}
                   class="w-full h-64 sm:h-96 object-cover rounded-lg mb-8"
+                  loading="eager"
+                  format="webp"
                 />
               )
             }
