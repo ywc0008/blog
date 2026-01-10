@@ -7,10 +7,8 @@
     "build": "astro build",
     "preview": "astro preview",
     "astro": "astro",
-    "lint": "eslint . --ext .js,.jsx,.ts,.tsx,.astro",
-    "lint:fix": "eslint . --ext .js,.jsx,.ts,.tsx,.astro --fix",
+    "lint": "eslint . --ext .js,.jsx,.ts,.tsx,.astro --fix",
     "format": "prettier --write \"**/*.{js,jsx,ts,tsx,astro,json,md,mdx,css}\"",
-    "format:check": "prettier --check \"**/*.{js,jsx,ts,tsx,astro,json,md,mdx,css}\"",
     "check": "astro check"
   },
   "dependencies": {
