@@ -51,12 +51,7 @@ const recentPosts = sortPostsByDate(posts).slice(0, 3);
               href="/"
               class="group inline-flex items-center justify-center px-6 py-3 border-2 border-gray-900 text-gray-900 font-medium rounded-lg hover:bg-gray-900 hover:text-white transition-all duration-200"
             >
-              <svg
-                class="w-5 h-5 mr-2"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
+              <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path
                   stroke-linecap="round"
                   stroke-linejoin="round"
@@ -70,12 +65,7 @@ const recentPosts = sortPostsByDate(posts).slice(0, 3);
               onclick="history.back()"
               class="inline-flex items-center justify-center px-6 py-3 bg-gray-100 text-gray-700 font-medium rounded-lg hover:bg-gray-200 transition-colors duration-200"
             >
-              <svg
-                class="w-5 h-5 mr-2"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
+              <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path
                   stroke-linecap="round"
                   stroke-linejoin="round"
@@ -91,9 +81,7 @@ const recentPosts = sortPostsByDate(posts).slice(0, 3);
         {
           recentPosts.length > 0 && (
             <div class="border-t border-gray-200 pt-12">
-              <h3 class="text-2xl font-bold mb-8 text-gray-900 text-center">
-                이런 글은 어떠세요?
-              </h3>
+              <h3 class="text-2xl font-bold mb-8 text-gray-900 text-center">이런 글은 어떠세요?</h3>
               <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
                 {recentPosts.map((post) => (
                   <Card post={post} />
