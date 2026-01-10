@@ -1,0 +1,110 @@
+---
+import { getCollection } from "astro:content";
+import BaseLayout from "../layouts/BaseLayout.astro";
+import Header from "../components/astro/Header.astro";
+import Footer from "../components/astro/Footer.astro";
+import Card from "../components/astro/Card.astro";
+import { sortPostsByDate } from "../utils/post";
+import type { BlogPost } from "../types";
+
+// Fetch recent posts for suggestions
+const allPosts = await getCollection("blog");
+const posts: BlogPost[] = allPosts
+  .map((post) => ({
+    slug: post.id,
+    title: post.data.title,
+    description: post.data.description,
+    pubDate: post.data.pubDate,
+    updatedDate: post.data.updatedDate,
+    heroImage: post.data.heroImage,
+    category: post.data.category,
+    tags: post.data.tags,
+    draft: post.data.draft || false,
+  }))
+  .filter((post) => !post.draft);
+
+const recentPosts = sortPostsByDate(posts).slice(0, 3);
+---
+
+<BaseLayout
+  title="404 - 페이지를 찾을 수 없습니다 | ywc.life"
+  description="요청하신 페이지를 찾을 수 없습니다."
+>
+  <div class="min-h-screen flex flex-col">
+    <Header />
+
+    <main class="flex-1">
+      <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+        <!-- 404 Message -->
+        <div class="text-center mb-16">
+          <h1 class="text-9xl font-bold text-gray-200 mb-4">404</h1>
+          <h2 class="text-3xl sm:text-4xl font-bold mb-4 text-gray-900">
+            페이지를 찾을 수 없습니다
+          </h2>
+          <p class="text-xl text-gray-600 mb-8">
+            요청하신 페이지가 존재하지 않거나 이동했을 수 있습니다.
+          </p>
+
+          <!-- Action Buttons -->
+          <div class="flex flex-col sm:flex-row gap-4 justify-center">
+            <a
+              href="/"
+              class="group inline-flex items-center justify-center px-6 py-3 border-2 border-gray-900 text-gray-900 font-medium rounded-lg hover:bg-gray-900 hover:text-white transition-all duration-200"
+            >
+              <svg
+                class="w-5 h-5 mr-2"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"
+                ></path>
+              </svg>
+              홈으로 돌아가기
+            </a>
+            <button
+              onclick="history.back()"
+              class="inline-flex items-center justify-center px-6 py-3 bg-gray-100 text-gray-700 font-medium rounded-lg hover:bg-gray-200 transition-colors duration-200"
+            >
+              <svg
+                class="w-5 h-5 mr-2"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+              </svg>
+              이전 페이지로
+            </button>
+          </div>
+        </div>
+
+        <!-- Recent Posts Suggestion -->
+        {
+          recentPosts.length > 0 && (
+            <div class="border-t border-gray-200 pt-12">
+              <h3 class="text-2xl font-bold mb-8 text-gray-900 text-center">
+                이런 글은 어떠세요?
+              </h3>
+              <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+                {recentPosts.map((post) => (
+                  <Card post={post} />
+                ))}
+              </div>
+            </div>
+          )
+        }
+      </div>
+    </main>
+
+    <Footer />
+  </div>
+</BaseLayout>
