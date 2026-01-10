@@ -23,19 +23,30 @@ const categoryId = "DIC_kwDOxxxxxx"; // Get from https://giscus.app
     data-theme="preferred_color_scheme"
     data-lang="ko"
     data-loading="lazy"
-    crossorigin="anonymous"
-    async
-  ></div>
+  >
+  </div>
 </div>
 
 <script>
   // Load Giscus script
   const script = document.createElement("script");
   script.src = "https://giscus.app/client.js";
-  script.setAttribute("data-repo", document.querySelector(".giscus")?.getAttribute("data-repo") || "");
-  script.setAttribute("data-repo-id", document.querySelector(".giscus")?.getAttribute("data-repo-id") || "");
-  script.setAttribute("data-category", document.querySelector(".giscus")?.getAttribute("data-category") || "");
-  script.setAttribute("data-category-id", document.querySelector(".giscus")?.getAttribute("data-category-id") || "");
+  script.setAttribute(
+    "data-repo",
+    document.querySelector(".giscus")?.getAttribute("data-repo") || ""
+  );
+  script.setAttribute(
+    "data-repo-id",
+    document.querySelector(".giscus")?.getAttribute("data-repo-id") || ""
+  );
+  script.setAttribute(
+    "data-category",
+    document.querySelector(".giscus")?.getAttribute("data-category") || ""
+  );
+  script.setAttribute(
+    "data-category-id",
+    document.querySelector(".giscus")?.getAttribute("data-category-id") || ""
+  );
   script.setAttribute("data-mapping", "pathname");
   script.setAttribute("data-strict", "0");
   script.setAttribute("data-reactions-enabled", "1");

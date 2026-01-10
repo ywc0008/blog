@@ -31,11 +31,6 @@ export default [
 
   // Ignore patterns
   {
-    ignores: [
-      "dist/",
-      "node_modules/",
-      ".astro/",
-      "**/*.d.ts",
-    ],
+    ignores: ["dist/", "node_modules/", ".astro/", "**/*.d.ts"],
   },
 ];

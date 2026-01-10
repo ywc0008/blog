@@ -64,7 +64,9 @@ const formattedUpdatedDate = post.data.updatedDate
           <div class="flex-1 min-w-0">
             <header class="mb-8">
               <div class="flex flex-wrap items-center gap-3 text-sm mb-4">
-                <span class="px-2 py-1 bg-blue-100 text-blue-800 rounded font-medium">{post.data.category}</span>
+                <span class="px-2 py-1 bg-blue-100 text-blue-800 rounded font-medium"
+                  >{post.data.category}</span
+                >
                 <span class="text-gray-600">{formattedDate}</span>
                 <span class="text-gray-600">{readingTime}분 읽기</span>
               </div>
@@ -72,26 +74,32 @@ const formattedUpdatedDate = post.data.updatedDate
               <h1 class="text-4xl sm:text-5xl font-bold mb-4 text-gray-900">{post.data.title}</h1>
               <p class="text-xl text-gray-600 mb-4">{post.data.description}</p>
 
-              {formattedUpdatedDate && (
-                <p class="text-sm text-gray-500 italic mb-4">
-                  마지막 업데이트: {formattedUpdatedDate}
-                </p>
-              )}
+              {
+                formattedUpdatedDate && (
+                  <p class="text-sm text-gray-500 italic mb-4">
+                    마지막 업데이트: {formattedUpdatedDate}
+                  </p>
+                )
+              }
 
               <div class="flex flex-wrap gap-2">
-                {post.data.tags.map((tag) => (
-                  <span class="px-3 py-1 bg-gray-100 text-gray-700 rounded">{tag}</span>
-                ))}
+                {
+                  post.data.tags.map((tag) => (
+                    <span class="px-3 py-1 bg-gray-100 text-gray-700 rounded">{tag}</span>
+                  ))
+                }
               </div>
             </header>
 
-            {post.data.heroImage && (
-              <img
-                src={post.data.heroImage}
-                alt={post.data.title}
-                class="w-full h-64 sm:h-96 object-cover rounded-lg mb-8"
-              />
-            )}
+            {
+              post.data.heroImage && (
+                <img
+                  src={post.data.heroImage}
+                  alt={post.data.title}
+                  class="w-full h-64 sm:h-96 object-cover rounded-lg mb-8"
+                />
+              )
+            }
 
             <div class="prose prose-lg max-w-none text-gray-800 leading-relaxed">
               <Content />
@@ -101,11 +109,13 @@ const formattedUpdatedDate = post.data.updatedDate
           </div>
 
           <!-- Sidebar with TOC -->
-          {headings.length > 0 && (
-            <aside class="hidden lg:block w-64 flex-shrink-0">
-              <TOC headings={headings} />
-            </aside>
-          )}
+          {
+            headings.length > 0 && (
+              <aside class="hidden lg:block w-64 flex-shrink-0">
+                <TOC headings={headings} />
+              </aside>
+            )
+          }
         </div>
       </article>
     </main>

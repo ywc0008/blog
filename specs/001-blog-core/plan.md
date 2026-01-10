@@ -22,7 +22,7 @@ Astro 5.x 기반 정적 블로그 구축. 핵심 요구사항은 포스트 읽�
 
 ## Constitution Check
 
-*GATE: Must pass before Phase 0 research. Re-check after Phase 1 design.*
+_GATE: Must pass before Phase 0 research. Re-check after Phase 1 design._
 
 ### I. 성능 우선 (Performance First) ✅
 

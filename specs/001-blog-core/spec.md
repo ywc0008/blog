@@ -5,7 +5,7 @@
 **Status**: Draft
 **Input**: User description: "Astro 5.x + React 19.x + TypeScript 5.x + TailwindCSS 4.x + Storybook 8.x + Biome + MDX + Shiki + Giscus. 컴포넌트 분류: React(.tsx/Storybook대상) - SearchModal, ThemeToggle, Button(onClick필요시). Astro(.astro/JS 0) - Comments(Giscus래퍼), Card, Header, Footer, BaseLayout. 기능요구사항: FR-001 포스트목록(정렬/필터/페이지네이션), FR-002 포스트상세(MDX+Shiki코드하이라이팅+TOC+읽기시간), FR-003 Giscus댓글(.astro로 구현, data-theme=\"preferred_color_scheme\"), FR-004 검색(React, Cmd+K), FR-005 다크모드(React, localStorage), FR-006 SEO(메타태그/OG/sitemap/RSS). Shiki설정: themes {light:'github-light', dark:'github-dark'}, wrap:true. 성능목표: LCP<2.5s, FID<100ms, CLS<0.1."
 
-## User Scenarios & Testing *(mandatory)*
+## User Scenarios & Testing _(mandatory)_
 
 ### User Story 1 - 포스트 읽기 (Priority: P1)
 
@@ -88,7 +88,7 @@
 - **코드 블록이 매우 긴 경우**: 가로 스크롤 또는 줄바꿈 옵션을 제공합니다.
 - **이미지 로딩 실패**: 대체 텍스트를 표시하고 레이아웃이 깨지지 않도록 합니다.
 
-## Requirements *(mandatory)*
+## Requirements _(mandatory)_
 
 ### Functional Requirements
 
@@ -108,7 +108,7 @@
 - **Tag (태그)**: 포스트의 세부 주제를 나타내는 키워드. 이름, 슬러그를 포함합니다.
 - **Theme Preference (테마 설정)**: 사용자의 다크/라이트 모드 선호도. 'dark', 'light', 'auto'(시스템 설정 따름) 값을 가집니다.
 
-## Success Criteria *(mandatory)*
+## Success Criteria _(mandatory)_
 
 ### Measurable Outcomes
 

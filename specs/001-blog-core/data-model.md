@@ -17,67 +17,61 @@
 **Source**: `src/content/blog/*.mdx`
 
 **Schema** (Zod):
+
 ```typescript
-import { z } from 'astro:content';
+import { z } from "astro:content";
 
 const blogPostSchema = z.object({
-  title: z.string()
-    .min(1, 'Title is required')
-    .max(100, 'Title must be 100 characters or less'),
+  title: z.string().min(1, "Title is required").max(100, "Title must be 100 characters or less"),
 
-  description: z.string()
-    .min(10, 'Description must be at least 10 characters')
-    .max(300, 'Description must be 300 characters or less'),
+  description: z
+    .string()
+    .min(10, "Description must be at least 10 characters")
+    .max(300, "Description must be 300 characters or less"),
 
-  pubDate: z.date()
-    .or(z.string().transform(str => new Date(str))),
+  pubDate: z.date().or(z.string().transform((str) => new Date(str))),
 
-  updatedDate: z.date()
-    .or(z.string().transform(str => new Date(str)))
+  updatedDate: z
+    .date()
+    .or(z.string().transform((str) => new Date(str)))
     .optional(),
 
-  heroImage: z.string()
-    .url('Hero image must be a valid URL')
-    .optional(),
+  heroImage: z.string().url("Hero image must be a valid URL").optional(),
 
-  category: z.string()
-    .min(1, 'Category is required'),
+  category: z.string().min(1, "Category is required"),
 
-  tags: z.array(z.string())
-    .min(1, 'At least one tag is required')
-    .max(10, 'Maximum 10 tags allowed'),
+  tags: z
+    .array(z.string())
+    .min(1, "At least one tag is required")
+    .max(10, "Maximum 10 tags allowed"),
 
-  draft: z.boolean()
-    .default(false),
+  draft: z.boolean().default(false),
 
-  author: z.string()
-    .default('Default Author'),
+  author: z.string().default("Default Author"),
 
-  readingTime: z.number()
-    .int()
-    .positive()
-    .optional(), // 자동 계산되므로 선택적
+  readingTime: z.number().int().positive().optional(), // 자동 계산되므로 선택적
 });
 ```
 
 **Fields**:
 
-| Field | Type | Required | Description | Validation |
-|-------|------|----------|-------------|------------|
-| title | string | ✅ | 포스트 제목 | 1-100자 |
-| description | string | ✅ | 포스트 요약 (SEO, OG 태그용) | 10-300자 |
-| pubDate | Date | ✅ | 최초 게시일 | Valid date |
-| updatedDate | Date | ❌ | 최종 수정일 | Valid date, > pubDate |
-| heroImage | string | ❌ | 대표 이미지 URL | Valid URL |
-| category | string | ✅ | 카테고리 (1개만) | 최소 1자 |
-| tags | string[] | ✅ | 태그 목록 | 1-10개 |
-| draft | boolean | ❌ | 초안 여부 (true면 빌드 제외) | Default: false |
-| author | string | ❌ | 작성자 이름 | Default: 'Default Author' |
-| readingTime | number | ❌ | 예상 읽기 시간 (분) | 자동 계산 |
+| Field       | Type     | Required | Description                  | Validation                |
+| ----------- | -------- | -------- | ---------------------------- | ------------------------- |
+| title       | string   | ✅       | 포스트 제목                  | 1-100자                   |
+| description | string   | ✅       | 포스트 요약 (SEO, OG 태그용) | 10-300자                  |
+| pubDate     | Date     | ✅       | 최초 게시일                  | Valid date                |
+| updatedDate | Date     | ❌       | 최종 수정일                  | Valid date, > pubDate     |
+| heroImage   | string   | ❌       | 대표 이미지 URL              | Valid URL                 |
+| category    | string   | ✅       | 카테고리 (1개만)             | 최소 1자                  |
+| tags        | string[] | ✅       | 태그 목록                    | 1-10개                    |
+| draft       | boolean  | ❌       | 초안 여부 (true면 빌드 제외) | Default: false            |
+| author      | string   | ❌       | 작성자 이름                  | Default: 'Default Author' |
+| readingTime | number   | ❌       | 예상 읽기 시간 (분)          | 자동 계산                 |
 
 **Body**: MDX 마크다운 콘텐츠 (Shiki로 코드 하이라이팅 적용)
 
 **Example**:
+
 ```mdx
 ---
 title: "Astro Islands로 성능 최적화하기"
@@ -99,11 +93,13 @@ const greeting = "Hello, Astro!";
 ```
 
 **Computed Fields**:
+
 - `slug`: 파일명에서 자동 생성 (`hello-world.mdx` → `hello-world`)
 - `readingTime`: 본문 단어 수 기반 계산 (200 words/min)
 - `excerpt`: description 또는 본문 첫 300자
 
 **Indexing**:
+
 - Primary: `slug` (unique)
 - Sortable: `pubDate` (desc), `updatedDate` (desc)
 - Filterable: `category`, `tags`, `draft`
@@ -117,16 +113,18 @@ const greeting = "Hello, Astro!";
 **Source**: `src/content/categories.json`
 
 **Schema**:
+
 ```typescript
 interface Category {
-  slug: string;       // URL-safe identifier
-  name: string;       // 표시 이름
+  slug: string; // URL-safe identifier
+  name: string; // 표시 이름
   description: string; // 카테고리 설명
-  color?: string;     // TailwindCSS 색상 (예: "blue-500")
+  color?: string; // TailwindCSS 색상 (예: "blue-500")
 }
 ```
 
 **Example**:
+
 ```json
 [
   {
@@ -145,11 +143,13 @@ interface Category {
 ```
 
 **Constraints**:
+
 - `slug`는 unique, lowercase, alphanumeric + hyphens
 - `name`은 1-30자
 - `description`은 10-200자
 
 **Relationship**:
+
 - `BlogPost.category` → `Category.slug` (foreign key)
 - One-to-many: 하나의 Category는 여러 BlogPost를 가질 수 있음
 
@@ -162,31 +162,35 @@ interface Category {
 **Source**: `BlogPost.tags` 배열에서 동적 수집
 
 **Schema**:
+
 ```typescript
 interface Tag {
-  name: string;       // 태그 이름 (예: "React", "Astro")
-  slug: string;       // URL-safe identifier (자동 생성)
-  count: number;      // 이 태그를 사용하는 포스트 수 (빌드 시 계산)
+  name: string; // 태그 이름 (예: "React", "Astro")
+  slug: string; // URL-safe identifier (자동 생성)
+  count: number; // 이 태그를 사용하는 포스트 수 (빌드 시 계산)
 }
 ```
 
 **Generation**:
+
 ```typescript
 // 빌드 시 모든 BlogPost에서 tags 수집
-const allTags = posts.flatMap(post => post.data.tags);
+const allTags = posts.flatMap((post) => post.data.tags);
 const uniqueTags = [...new Set(allTags)];
-const tagsWithCount = uniqueTags.map(tag => ({
+const tagsWithCount = uniqueTags.map((tag) => ({
   name: tag,
   slug: slugify(tag),
-  count: posts.filter(p => p.data.tags.includes(tag)).length,
+  count: posts.filter((p) => p.data.tags.includes(tag)).length,
 }));
 ```
 
 **Constraints**:
+
 - `name`은 1-30자
 - `slug`는 lowercase, alphanumeric + hyphens
 
 **Relationship**:
+
 - Many-to-many: BlogPost ↔ Tag (배열로 관리)
 
 ---
@@ -198,8 +202,9 @@ const tagsWithCount = uniqueTags.map(tag => ({
 **Source**: Browser `localStorage`
 
 **Schema**:
+
 ```typescript
-type Theme = 'light' | 'dark' | 'auto';
+type Theme = "light" | "dark" | "auto";
 
 interface ThemePreference {
   theme: Theme;
@@ -208,16 +213,19 @@ interface ThemePreference {
 ```
 
 **Storage**:
+
 ```typescript
 // localStorage key: 'theme'
-const storedTheme = localStorage.getItem('theme') as Theme | null;
+const storedTheme = localStorage.getItem("theme") as Theme | null;
 ```
 
 **Constraints**:
+
 - `theme`: 'light', 'dark', 'auto' 중 하나
 - Default: 'auto' (시스템 설정 따름)
 
 **State Transitions**:
+
 ```
 auto → light → dark → light → ...
 ```
@@ -231,6 +239,7 @@ auto → light → dark → light → ...
 **Source**: `/api/posts.json` (빌드 시 생성)
 
 **Schema**:
+
 ```typescript
 interface SearchIndexEntry {
   slug: string;
@@ -245,13 +254,14 @@ type SearchIndex = SearchIndexEntry[];
 ```
 
 **Generation**:
+
 ```typescript
 // src/pages/api/posts.json.ts
-import { getCollection } from 'astro:content';
+import { getCollection } from "astro:content";
 
 export async function GET() {
-  const posts = await getCollection('blog', ({ data }) => !data.draft);
-  const searchIndex = posts.map(post => ({
+  const posts = await getCollection("blog", ({ data }) => !data.draft);
+  const searchIndex = posts.map((post) => ({
     slug: post.slug,
     title: post.data.title,
     description: post.data.description,
@@ -261,7 +271,7 @@ export async function GET() {
   }));
 
   return new Response(JSON.stringify(searchIndex), {
-    headers: { 'Content-Type': 'application/json' },
+    headers: { "Content-Type": "application/json" },
   });
 }
 ```
@@ -269,6 +279,7 @@ export async function GET() {
 **Usage**: SearchModal 컴포넌트에서 React Query로 fetch하여 클라이언트 필터링
 
 **Constraints**:
+
 - 파일 크기: ~10KB (100 포스트 기준)
 - 캐싱: `staleTime: Infinity` (빌드 시 고정)
 
@@ -285,6 +296,7 @@ ThemePreference (독립적, 클라이언트 전용)
 ```
 
 **Cardinality**:
+
 - Category → BlogPost: One-to-Many
 - BlogPost → Tag: Many-to-Many (배열)
 - BlogPost → SearchIndex: One-to-One (빌드 시 생성)
@@ -372,9 +384,9 @@ ThemePreference (독립적, 클라이언트 전용)
 ```typescript
 // src/types/index.ts
 
-import type { CollectionEntry } from 'astro:content';
+import type { CollectionEntry } from "astro:content";
 
-export type BlogPost = CollectionEntry<'blog'>;
+export type BlogPost = CollectionEntry<"blog">;
 
 export interface Category {
   slug: string;
@@ -398,7 +410,7 @@ export interface SearchIndexEntry {
   pubDate: string;
 }
 
-export type Theme = 'light' | 'dark' | 'auto';
+export type Theme = "light" | "dark" | "auto";
 
 export interface ThemePreference {
   theme: Theme;
@@ -419,7 +431,7 @@ export interface SEOProps {
   title: string;
   description: string;
   image?: string;
-  type?: 'website' | 'article';
+  type?: "website" | "article";
 }
 ```
 

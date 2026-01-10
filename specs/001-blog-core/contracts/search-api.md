@@ -11,14 +11,17 @@
 ## Request
 
 ### HTTP Method
+
 ```
 GET /api/posts.json
 ```
 
 ### Headers
+
 None required (정적 파일)
 
 ### Query Parameters
+
 None (정적 JSON 파일이므로 필터링은 클라이언트에서 수행)
 
 ## Response
@@ -28,20 +31,22 @@ None (정적 JSON 파일이므로 필터링은 클라이언트에서 수행)
 **Content-Type**: `application/json`
 
 **Schema**:
+
 ```typescript
 interface SearchIndexEntry {
-  slug: string;          // 포스트 URL slug
-  title: string;         // 포스트 제목
-  description: string;   // 포스트 요약
-  category: string;      // 카테고리 slug
-  tags: string[];        // 태그 배열
-  pubDate: string;       // ISO 8601 형식 날짜
+  slug: string; // 포스트 URL slug
+  title: string; // 포스트 제목
+  description: string; // 포스트 요약
+  category: string; // 카테고리 slug
+  tags: string[]; // 태그 배열
+  pubDate: string; // ISO 8601 형식 날짜
 }
 
 type SearchIndexResponse = SearchIndexEntry[];
 ```
 
 **Example Response**:
+
 ```json
 [
   {
@@ -65,18 +70,19 @@ type SearchIndexResponse = SearchIndexEntry[];
 
 ### Field Constraints
 
-| Field | Type | Required | Constraints | Description |
-|-------|------|----------|-------------|-------------|
-| slug | string | ✅ | unique, lowercase, alphanumeric + hyphens | URL-safe 식별자 |
-| title | string | ✅ | 1-100자 | 포스트 제목 |
-| description | string | ✅ | 10-300자 | SEO 및 검색용 요약 |
-| category | string | ✅ | 존재하는 카테고리 slug | 카테고리 |
-| tags | string[] | ✅ | 1-10개 항목 | 태그 목록 |
-| pubDate | string | ✅ | ISO 8601 형식 | 게시일 |
+| Field       | Type     | Required | Constraints                               | Description        |
+| ----------- | -------- | -------- | ----------------------------------------- | ------------------ |
+| slug        | string   | ✅       | unique, lowercase, alphanumeric + hyphens | URL-safe 식별자    |
+| title       | string   | ✅       | 1-100자                                   | 포스트 제목        |
+| description | string   | ✅       | 10-300자                                  | SEO 및 검색용 요약 |
+| category    | string   | ✅       | 존재하는 카테고리 slug                    | 카테고리           |
+| tags        | string[] | ✅       | 1-10개 항목                               | 태그 목록          |
+| pubDate     | string   | ✅       | ISO 8601 형식                             | 게시일             |
 
 ### Error Responses
 
 **404 Not Found**:
+
 ```json
 {
   "error": "File not found",
@@ -90,6 +96,7 @@ type SearchIndexResponse = SearchIndexEntry[];
 ## Caching
 
 ### HTTP Headers
+
 ```
 Cache-Control: public, max-age=31536000, immutable
 ```
@@ -100,9 +107,9 @@ Cache-Control: public, max-age=31536000, immutable
 
 ```typescript
 const { data } = useQuery({
-  queryKey: ['posts'],
+  queryKey: ["posts"],
   queryFn: async () => {
-    const res = await fetch('/api/posts.json');
+    const res = await fetch("/api/posts.json");
     return res.json() as SearchIndexEntry[];
   },
   staleTime: Infinity, // 영구 캐싱 (빌드 시 고정)
@@ -115,7 +122,7 @@ const { data } = useQuery({
 ### File Size Estimates
 
 | Post Count | Estimated Size | Load Time (3G) |
-|------------|----------------|----------------|
+| ---------- | -------------- | -------------- |
 | 10         | ~1 KB          | < 10ms         |
 | 100        | ~10 KB         | < 100ms        |
 | 1,000      | ~100 KB        | ~500ms         |
@@ -206,20 +213,18 @@ export function SearchModal({ isOpen, onClose }: Props) {
 
 ```typescript
 // src/pages/api/posts.json.ts
-import { getCollection } from 'astro:content';
-import type { APIRoute } from 'astro';
+import { getCollection } from "astro:content";
+import type { APIRoute } from "astro";
 
 export const GET: APIRoute = async () => {
   // draft가 아닌 포스트만 포함
-  const posts = await getCollection('blog', ({ data }) => !data.draft);
+  const posts = await getCollection("blog", ({ data }) => !data.draft);
 
   // 최신순 정렬
-  const sortedPosts = posts.sort((a, b) =>
-    b.data.pubDate.getTime() - a.data.pubDate.getTime()
-  );
+  const sortedPosts = posts.sort((a, b) => b.data.pubDate.getTime() - a.data.pubDate.getTime());
 
   // 검색 인덱스 생성
-  const searchIndex = sortedPosts.map(post => ({
+  const searchIndex = sortedPosts.map((post) => ({
     slug: post.slug,
     title: post.data.title,
     description: post.data.description,
@@ -231,8 +236,8 @@ export const GET: APIRoute = async () => {
   return new Response(JSON.stringify(searchIndex), {
     status: 200,
     headers: {
-      'Content-Type': 'application/json',
-      'Cache-Control': 'public, max-age=31536000, immutable',
+      "Content-Type": "application/json",
+      "Cache-Control": "public, max-age=31536000, immutable",
     },
   });
 };
@@ -244,30 +249,30 @@ export const GET: APIRoute = async () => {
 
 ```typescript
 // src/pages/api/posts.json.test.ts
-import { describe, it, expect } from 'vitest';
-import { GET } from './posts.json';
+import { describe, it, expect } from "vitest";
+import { GET } from "./posts.json";
 
-describe('/api/posts.json', () => {
-  it('should return array of posts', async () => {
+describe("/api/posts.json", () => {
+  it("should return array of posts", async () => {
     const response = await GET({} as any);
     const data = await response.json();
 
     expect(Array.isArray(data)).toBe(true);
-    expect(data[0]).toHaveProperty('slug');
-    expect(data[0]).toHaveProperty('title');
+    expect(data[0]).toHaveProperty("slug");
+    expect(data[0]).toHaveProperty("title");
   });
 
-  it('should exclude draft posts', async () => {
+  it("should exclude draft posts", async () => {
     const response = await GET({} as any);
     const data = await response.json();
 
-    data.forEach(post => {
+    data.forEach((post) => {
       // draft 필드가 없거나 false여야 함
       expect(post.draft).toBeUndefined();
     });
   });
 
-  it('should sort posts by pubDate desc', async () => {
+  it("should sort posts by pubDate desc", async () => {
     const response = await GET({} as any);
     const data = await response.json();
 
@@ -284,13 +289,13 @@ describe('/api/posts.json', () => {
 
 ```typescript
 // e2e/search.spec.ts
-import { test, expect } from '@playwright/test';
+import { test, expect } from "@playwright/test";
 
-test('search API returns valid JSON', async ({ page }) => {
-  const response = await page.request.get('/api/posts.json');
+test("search API returns valid JSON", async ({ page }) => {
+  const response = await page.request.get("/api/posts.json");
 
   expect(response.ok()).toBeTruthy();
-  expect(response.headers()['content-type']).toContain('application/json');
+  expect(response.headers()["content-type"]).toContain("application/json");
 
   const data = await response.json();
   expect(Array.isArray(data)).toBe(true);
