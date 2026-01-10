@@ -1,3 +1,5 @@
+import type { ImageMetadata } from "astro";
+
 // Blog post types
 export interface BlogPost {
   slug: string;
@@ -5,7 +7,7 @@ export interface BlogPost {
   description: string;
   pubDate: Date;
   updatedDate?: Date;
-  heroImage?: string;
+  heroImage?: ImageMetadata;
   category: string;
   tags: string[];
   draft: boolean;
