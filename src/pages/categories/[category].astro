@@ -32,7 +32,7 @@ const allPosts = await getCollection("blog");
 const posts: BlogPost[] = allPosts
   .filter((post) => !post.data.draft && post.data.category === categoryInfo.name)
   .map((post) => ({
-    slug: post.id,
+    slug: post.slug,
     title: post.data.title,
     description: post.data.description,
     pubDate: post.data.pubDate,

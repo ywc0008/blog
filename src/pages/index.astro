@@ -13,7 +13,7 @@ const allPosts = await getCollection("blog");
 // Convert to BlogPost type and filter/sort
 const posts: BlogPost[] = allPosts
   .map((post) => ({
-    slug: post.id,
+    slug: post.slug,
     title: post.data.title,
     description: post.data.description,
     pubDate: post.data.pubDate,
