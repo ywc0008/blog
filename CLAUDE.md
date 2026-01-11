@@ -28,6 +28,8 @@ pnpm format             # Format with Prettier
 pnpm check              # TypeScript type checking (astro check)
 ```
 
+**Important**: To save tokens, do NOT automatically run build/check/lint/format commands. Instead, ask the user to run these commands manually and report back when complete.
+
 ## Architecture
 
 ### Astro Islands Pattern
@@ -63,6 +65,15 @@ category: string (must match categories.json)
 tags: string[]
 draft: boolean
 ```
+
+#### Creating New Blog Posts
+
+1. Create MDX file in `src/content/blog/[post-name].mdx`
+2. Add hero image (if any) to `src/assets/posts/[post-name]/`
+3. Ensure `category` matches one from `src/content/categories.json`
+4. Use lowercase for tags (consistency)
+5. Set `draft: true` for unpublished posts
+6. Use ISO 8601 format for dates: `2024-03-13T00:00:00Z`
 
 ### Styling Approach
 
@@ -146,25 +157,59 @@ Project is configured for Vercel deployment:
 }
 ```
 
-### Before First Deploy
+### Giscus Configuration
 
-Update Giscus comments configuration in `src/components/astro/Comments.astro`:
+Giscus comments are already configured in `src/components/astro/Comments.astro`:
 
 ```typescript
-const repo = "your-username/your-repo"; // Replace with actual repo
-const repoId = "R_kgDOxxxxxx"; // Get from https://giscus.app
-const categoryId = "DIC_kwDOxxxxxx"; // Get from https://giscus.app
+const repo = "ywc0008/blog";
+const repoId = "R_kgDOQ1_i3A";
+const category = "General";
+const categoryId = "DIC_kwDOQ1_i3M4C0zIb";
 ```
 
-Comments will not work until these values are configured.
+These values are public and safe to commit. Comments are displayed via GitHub Discussions integration.
+
+## Security
+
+### XSS Protection
+
+- Astro and React provide automatic XSS protection by default
+- MDX content is safely rendered through Astro's Content Collections API
+- All user-facing content is validated through Zod schemas in `src/content/config.ts`
+- No unsafe HTML rendering patterns are used in this codebase
+
+### External Links
+
+- External links must include `rel="noopener noreferrer"` to prevent tabnabbing attacks
+- Example pattern in `Footer.astro`:
+  ```typescript
+  target={link.href.startsWith("http") ? "_blank" : undefined}
+  rel={link.href.startsWith("http") ? "noopener noreferrer" : undefined}
+  ```
+
+### Third-Party Scripts
+
+- Giscus script loaded from `https://giscus.app/client.js` with `crossOrigin="anonymous"`
+- Vercel Analytics integrated via official `@vercel/analytics` package
+- No Subresource Integrity (SRI) hashes used (not provided by Giscus)
+
+### Content Security
+
+- All blog content stored in Git repository (version controlled)
+- Draft posts filtered at build time via `draft: boolean` frontmatter field
+- No runtime content injection or dynamic user input processing
+- Static site generation eliminates SQL/command injection vectors
 
 ## Known Issues & Important Notes
 
 - **Sharp Dependency**: MUST be installed for Astro Image. Vercel builds fail without it (MissingSharp error)
 - React 19 with @astrojs/react may have compatibility issues with hooks
 - Search/filter features are postponed until React compatibility is resolved
-- Giscus comments require manual configuration before deployment
-- **Git Commits**: DO NOT add "Co-Authored-By: Claude Sonnet 4.5" to commit messages
+- **Git Commits**:
+  - Write commit messages in Korean (project convention)
+  - DO NOT add "Co-Authored-By: Claude Sonnet 4.5" to commit messages
+  - Follow conventional commits format: `feat:`, `fix:`, `docs:`, `design:`, etc.
 
 <!-- MANUAL ADDITIONS START -->
 <!-- MANUAL ADDITIONS END -->
