@@ -91,17 +91,17 @@
 
 ### Implementation for User Story 2
 
-- [ ] T033 [P] [US2] Create search index API endpoint in src/pages/api/posts.json.ts (export GET function, fetch all non-draft posts, return JSON with slug/title/description/category/tags/pubDate)
-- [ ] T034 [P] [US2] Create search utility in src/utils/search.ts (fuzzy search logic, filter by query, highlight matches)
-- [ ] T035 [P] [US2] Create SearchModal component in src/components/react/SearchModal.tsx (fetch /api/posts.json, search input state, filtered results rendering)
-- [ ] T036 [US2] Add keyboard listener for Cmd+K/Ctrl+K to open SearchModal (global event listener in BaseLayout)
-- [ ] T037 [US2] Integrate SearchModal into BaseLayout with client:idle directive
-- [ ] T038 [P] [US2] Create category filter page in src/pages/categories/[category].astro (getStaticPaths from categories.json, filter posts by category)
-- [ ] T039 [P] [US2] Create tag filter page in src/pages/tags/[tag].astro (getStaticPaths from all tags, filter posts by tag)
-- [ ] T040 [US2] Add category and tag links to Card component
+- [ ] T033 [P] [US2] Create search index API endpoint in src/pages/api/posts.json.ts (export GET function, fetch all non-draft posts, return JSON with slug/title/description/category/tags/pubDate) **[POSTPONED: React 19 compatibility]**
+- [ ] T034 [P] [US2] Create search utility in src/utils/search.ts (fuzzy search logic, filter by query, highlight matches) **[POSTPONED: React 19 compatibility]**
+- [ ] T035 [P] [US2] Create SearchModal component in src/components/react/SearchModal.tsx (fetch /api/posts.json, search input state, filtered results rendering) **[POSTPONED: React 19 compatibility]**
+- [ ] T036 [US2] Add keyboard listener for Cmd+K/Ctrl+K to open SearchModal (global event listener in BaseLayout) **[POSTPONED: React 19 compatibility]**
+- [ ] T037 [US2] Integrate SearchModal into BaseLayout with client:idle directive **[POSTPONED: React 19 compatibility]**
+- [x] T038 [P] [US2] Create category filter page in src/pages/categories/[category].astro (getStaticPaths from categories.json, filter posts by category)
+- [x] T039 [P] [US2] Create tag filter page in src/pages/tags/[tag].astro (getStaticPaths from all tags, filter posts by tag)
+- [x] T040 [US2] Add category and tag links to Card component
 - [ ] T041 [US2] Add sorting controls to post list page (latest/oldest toggle, update getCollection sort)
 - [ ] T042 [US2] Add pagination to post list page (10 posts per page, page navigation)
-- [ ] T043 [US2] Style SearchModal with TailwindCSS (modal overlay, search input, results list)
+- [ ] T043 [US2] Style SearchModal with TailwindCSS (modal overlay, search input, results list) **[POSTPONED: React 19 compatibility]**
 
 **Checkpoint**: At this point, User Stories 1 AND 2 should both work independently
 
@@ -115,14 +115,14 @@
 
 ### Implementation for User Story 4
 
-- [ ] T044 [P] [US4] Create SEO component in src/components/astro/SEO.astro (meta tags, OG tags, Twitter Card, canonical URL)
-- [ ] T045 [US4] Integrate SEO component into BaseLayout with props (title, description, image, type)
-- [ ] T046 [US4] Add SEO metadata to post list page (site title, site description)
-- [ ] T047 [US4] Add SEO metadata to post detail page (post title, post description, hero image)
-- [ ] T048 [P] [US4] Create RSS feed endpoint in src/pages/rss.xml.ts (use @astrojs/rss, fetch latest 20 posts, generate RSS 2.0 XML)
-- [ ] T049 [US4] Add RSS feed link to HTML head in BaseLayout
-- [ ] T050 [US4] Add sitemap.xml generation via @astrojs/sitemap integration (already configured in astro.config.mjs)
-- [ ] T051 [US4] Create robots.txt in public/ directory (allow all, sitemap URL)
+- [x] T044 [P] [US4] Create SEO component in src/components/astro/SEO.astro (meta tags, OG tags, Twitter Card, canonical URL)
+- [x] T045 [US4] Integrate SEO component into BaseLayout with props (title, description, image, type)
+- [x] T046 [US4] Add SEO metadata to post list page (site title, site description)
+- [x] T047 [US4] Add SEO metadata to post detail page (post title, post description, hero image)
+- [x] T048 [P] [US4] Create RSS feed endpoint in src/pages/rss.xml.ts (use @astrojs/rss, fetch latest 20 posts, generate RSS 2.0 XML)
+- [x] T049 [US4] Add RSS feed link to HTML head in BaseLayout
+- [x] T050 [US4] Add sitemap.xml generation via @astrojs/sitemap integration (already configured in astro.config.mjs)
+- [x] T051 [US4] Create robots.txt in public/ directory (allow all, sitemap URL)
 - [ ] T052 [US4] Test Open Graph tags with Facebook Sharing Debugger or similar tool
 - [ ] T053 [US4] Test Twitter Card with Twitter Card Validator
 
