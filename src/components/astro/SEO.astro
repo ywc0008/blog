@@ -29,6 +29,8 @@ const imageURL = image ? new URL(image, Astro.site) : undefined;
 <meta property="og:url" content={canonicalURL} />
 <meta property="og:title" content={title} />
 <meta property="og:description" content={description} />
+<meta property="og:locale" content="ko_KR" />
+<meta property="og:site_name" content="ywc.life" />
 {imageURL && <meta property="og:image" content={imageURL} />}
 {
   type === "article" && article?.publishedTime && (
@@ -57,3 +59,34 @@ const imageURL = image ? new URL(image, Astro.site) : undefined;
 <meta property="twitter:title" content={title} />
 <meta property="twitter:description" content={description} />
 {imageURL && <meta property="twitter:image" content={imageURL} />}
+
+<!-- JSON-LD Structured Data -->
+{
+  type === "website" ? (
+    <script
+      type="application/ld+json"
+      set:html={JSON.stringify({
+        "@context": "https://schema.org",
+        "@type": "WebSite",
+        name: "ywc.life",
+        url: "https://ywc.life",
+      })}
+    />
+  ) : (
+    <script
+      type="application/ld+json"
+      set:html={JSON.stringify({
+        "@context": "https://schema.org",
+        "@type": "Article",
+        headline: title,
+        datePublished: article?.publishedTime,
+        dateModified: article?.modifiedTime || article?.publishedTime,
+        author: {
+          "@type": "Person",
+          name: article?.author || "ywc",
+        },
+        ...(imageURL && { image: imageURL.toString() }),
+      })}
+    />
+  )
+}
