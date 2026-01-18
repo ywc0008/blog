@@ -1,0 +1,264 @@
+---
+// Pagefind Search Component
+---
+
+<button
+  id="search-button"
+  class="flex items-center gap-2 px-3 py-1.5 text-gray-500 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors cursor-pointer border-none"
+  aria-label="검색"
+>
+  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <path
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      stroke-width="2"
+      d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+  </svg>
+  <span class="hidden sm:inline text-sm">검색</span>
+  <kbd
+    class="hidden sm:inline-flex items-center px-1.5 py-0.5 text-xs bg-white rounded border border-gray-300"
+    >⌘K</kbd
+  >
+</button>
+
+<!-- Search Modal -->
+<div
+  id="search-modal"
+  class="fixed inset-0 z-100 hidden items-start justify-center pt-[10vh] bg-black/50 backdrop-blur-sm"
+>
+  <div
+    id="search-container"
+    class="w-full max-w-2xl mx-4 bg-white rounded-xl shadow-2xl overflow-hidden"
+  >
+    <div id="pagefind-container"></div>
+  </div>
+</div>
+
+<script is:inline>
+  (function () {
+    var pagefind = null;
+    var isInitialized = false;
+    var debounceTimer = null;
+
+    function setLoadingState(container) {
+      container.textContent = "";
+      var loadingDiv = document.createElement("div");
+      loadingDiv.className = "p-8 text-center text-gray-500";
+      loadingDiv.textContent = "검색 로딩 중...";
+      container.appendChild(loadingDiv);
+    }
+
+    function setErrorState(container, message, submessage) {
+      container.textContent = "";
+      var errorDiv = document.createElement("div");
+      errorDiv.className = "p-8 text-center text-red-500";
+      errorDiv.textContent = message;
+      if (submessage) {
+        var subDiv = document.createElement("span");
+        subDiv.className = "text-sm text-gray-500 block mt-2";
+        subDiv.textContent = submessage;
+        errorDiv.appendChild(subDiv);
+      }
+      container.appendChild(errorDiv);
+    }
+
+    function createResultItem(result) {
+      var link = document.createElement("a");
+      link.href = result.url;
+      link.className =
+        "block p-4 hover:bg-gray-50 rounded-lg transition-colors no-underline border-b border-gray-100";
+
+      var title = document.createElement("h3");
+      title.className = "text-lg font-semibold text-gray-900 mb-1";
+      title.textContent = result.meta?.title || "제목 없음";
+
+      var excerpt = document.createElement("p");
+      excerpt.className = "text-sm text-gray-600 line-clamp-2";
+      // Pagefind excerpt는 빌드 타임에 생성된 안전한 HTML
+      excerpt.innerHTML = result.excerpt || "";
+
+      link.appendChild(title);
+      link.appendChild(excerpt);
+      return link;
+    }
+
+    function setMessage(container, message, className) {
+      container.textContent = "";
+      var p = document.createElement("p");
+      p.className = (className || "text-gray-500") + " text-center py-8";
+      p.textContent = message;
+      container.appendChild(p);
+    }
+
+    // Pagefind UI 초기화
+    async function initPagefind() {
+      var container = document.getElementById("pagefind-container");
+      if (!container) return;
+
+      setLoadingState(container);
+
+      try {
+        pagefind = await import("/pagefind/pagefind.js");
+        await pagefind.init();
+      } catch (error) {
+        console.error("Pagefind 로드 실패:", error);
+        setErrorState(
+          container,
+          "검색 기능을 로드할 수 없습니다.",
+          "개발 환경에서는 빌드 후 preview로 테스트하세요."
+        );
+        return;
+      }
+
+      // 검색 UI 생성
+      container.textContent = "";
+
+      var wrapper = document.createElement("div");
+      wrapper.className = "p-4";
+
+      // 검색 input
+      var inputWrapper = document.createElement("div");
+      inputWrapper.className = "relative";
+
+      var input = document.createElement("input");
+      input.type = "text";
+      input.id = "pagefind-input";
+      input.placeholder = "블로그 검색...";
+      input.className =
+        "w-full px-4 py-3 pl-10 text-lg border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent";
+
+      var searchIcon = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+      searchIcon.setAttribute(
+        "class",
+        "absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400"
+      );
+      searchIcon.setAttribute("fill", "none");
+      searchIcon.setAttribute("stroke", "currentColor");
+      searchIcon.setAttribute("viewBox", "0 0 24 24");
+      var path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+      path.setAttribute("stroke-linecap", "round");
+      path.setAttribute("stroke-linejoin", "round");
+      path.setAttribute("stroke-width", "2");
+      path.setAttribute("d", "M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z");
+      searchIcon.appendChild(path);
+
+      inputWrapper.appendChild(input);
+      inputWrapper.appendChild(searchIcon);
+
+      // 결과 컨테이너
+      var resultsContainer = document.createElement("div");
+      resultsContainer.id = "pagefind-results";
+      resultsContainer.className = "mt-4 max-h-[60vh] overflow-y-auto";
+      setMessage(resultsContainer, "검색어를 입력하세요");
+
+      // 푸터
+      var footer = document.createElement("div");
+      footer.className =
+        "mt-4 pt-4 border-t border-gray-200 flex justify-between text-sm text-gray-500";
+      var escSpan = document.createElement("span");
+      escSpan.textContent = "ESC로 닫기";
+      var poweredSpan = document.createElement("span");
+      poweredSpan.textContent = "Powered by Pagefind";
+      footer.appendChild(escSpan);
+      footer.appendChild(poweredSpan);
+
+      wrapper.appendChild(inputWrapper);
+      wrapper.appendChild(resultsContainer);
+      wrapper.appendChild(footer);
+      container.appendChild(wrapper);
+
+      // 검색 이벤트
+      input.addEventListener("input", function () {
+        clearTimeout(debounceTimer);
+        debounceTimer = setTimeout(async function () {
+          var query = input.value.trim();
+
+          if (!query) {
+            setMessage(resultsContainer, "검색어를 입력하세요");
+            return;
+          }
+
+          try {
+            var search = await pagefind.search(query);
+            var results = await Promise.all(
+              search.results.slice(0, 10).map(function (r) {
+                return r.data();
+              })
+            );
+
+            if (results.length === 0) {
+              setMessage(resultsContainer, "검색 결과가 없습니다");
+              return;
+            }
+
+            resultsContainer.textContent = "";
+            results.forEach(function (result) {
+              resultsContainer.appendChild(createResultItem(result));
+            });
+          } catch (error) {
+            console.error("검색 에러:", error);
+            setMessage(resultsContainer, "검색 중 오류가 발생했습니다", "text-red-500");
+          }
+        }, 200);
+      });
+
+      setTimeout(function () {
+        input.focus();
+      }, 50);
+    }
+
+    // Modal 제어
+    var searchButton = document.getElementById("search-button");
+    var searchModal = document.getElementById("search-modal");
+
+    function openModal() {
+      if (!searchModal) return;
+      searchModal.classList.remove("hidden");
+      searchModal.classList.add("flex");
+      document.body.style.overflow = "hidden";
+
+      if (!isInitialized) {
+        initPagefind();
+        isInitialized = true;
+      } else {
+        setTimeout(function () {
+          var input = document.getElementById("pagefind-input");
+          if (input) input.focus();
+        }, 50);
+      }
+    }
+
+    function closeModal() {
+      if (!searchModal) return;
+      searchModal.classList.add("hidden");
+      searchModal.classList.remove("flex");
+      document.body.style.overflow = "";
+    }
+
+    if (searchButton) {
+      searchButton.addEventListener("click", openModal);
+    }
+
+    if (searchModal) {
+      searchModal.addEventListener("click", function (e) {
+        if (e.target === searchModal) {
+          closeModal();
+        }
+      });
+    }
+
+    document.addEventListener("keydown", function (e) {
+      if (e.key === "Escape") {
+        closeModal();
+      }
+      if ((e.metaKey || e.ctrlKey) && e.key === "k") {
+        e.preventDefault();
+        if (searchModal && searchModal.classList.contains("hidden")) {
+          openModal();
+        } else {
+          closeModal();
+        }
+      }
+    });
+  })();
+</script>
