@@ -11,7 +11,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - **Image Processing**: Sharp 0.34.x (REQUIRED for Astro Image optimization)
 - **Code Highlighting**: Shiki (build-time)
 - **Comments**: Giscus (GitHub Discussions)
-- **Analytics**: Vercel Analytics (integrated in BaseLayout.astro)
+- **Analytics**: Google Analytics (Partytown) + Cloudflare Web Analytics (integrated in BaseLayout.astro)
 - **TypeScript**: 5.x with strict mode
 
 ## Commands
@@ -21,6 +21,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 pnpm dev                 # Start dev server at localhost:4321
 pnpm build              # Production build to ./dist/
 pnpm preview            # Preview production build
+pnpm preview:cf         # Cloudflare Pages local preview
 
 # Code Quality
 pnpm lint               # Run ESLint with auto-fix
@@ -107,7 +108,7 @@ draft: boolean
 - **Type**: `heroImage: image().optional()` in Content Collections schema returns `ImageMetadata`
 - **Auto-optimization**: JPG/PNG → WebP, responsive srcset, lazy loading
 - **BlogPost Type**: `heroImage?: ImageMetadata` in `src/types/index.ts`
-- **Vercel Deployment**: Without Sharp, builds will fail with MissingSharp error
+- **Cloudflare Deployment**: Without Sharp, builds will fail with MissingSharp error
 
 ### Key Files
 
@@ -123,7 +124,8 @@ draft: boolean
 - `src/components/astro/TOC.astro`: Table of contents with Intersection Observer for current section highlighting
 - `src/pages/posts/[slug].astro`: Post detail page with hero image display and TOC sidebar
 - `src/pages/404.astro`: Custom 404 page with recent posts suggestions
-- `.nvmrc`: Node 20 for Vercel deployment
+- `.nvmrc`: Node 20 for Cloudflare Pages deployment
+- `wrangler.jsonc`: Cloudflare Pages configuration
 
 ## Development Constraints
 
@@ -135,27 +137,42 @@ draft: boolean
 
 ## Deployment
 
-### Vercel (Recommended)
+### Cloudflare Pages
 
-Project is configured for Vercel deployment:
+Project is configured for Cloudflare Pages deployment:
 
 - **Site URL**: https://ywc.life (set in `astro.config.mjs`)
 - **Build Command**: `pnpm build`
 - **Output Directory**: `dist`
-- **Install Command**: `pnpm install`
+- **Node.js Version**: 20 (set `NODE_VERSION=20` in environment variables)
 - **CRITICAL**: Sharp must be in dependencies for image optimization to work
 
-`vercel.json`:
+`wrangler.jsonc`:
 
-```json
+```jsonc
 {
-  "buildCommand": "pnpm build",
-  "devCommand": "pnpm dev",
-  "installCommand": "pnpm install",
-  "framework": "astro",
-  "outputDirectory": "dist"
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "ywc-life-blog",
+  "compatibility_date": "2026-01-18",
+  "pages_build_output_dir": "./dist",
 }
 ```
+
+#### Cloudflare Dashboard Setup
+
+1. **Create Pages Project**: Workers & Pages → Create → Pages → Connect to Git
+2. **Select Repository**: `ywc0008/blog`
+3. **Build Settings**: Framework preset `Astro`, Build command `pnpm build`, Output directory `dist`
+4. **Environment Variables**: Set `NODE_VERSION=20`
+5. **Custom Domain**: Custom domains → Set up a custom domain → `ywc.life`
+
+#### Cloudflare Web Analytics
+
+Web Analytics token is configured in `src/layouts/BaseLayout.astro`. To get a new token:
+
+1. Cloudflare Dashboard → Analytics & Logs → Web Analytics
+2. Add a site → Enter domain
+3. Copy the token to `data-cf-beacon` attribute
 
 ### Giscus Configuration
 
@@ -191,7 +208,8 @@ These values are public and safe to commit. Comments are displayed via GitHub Di
 ### Third-Party Scripts
 
 - Giscus script loaded from `https://giscus.app/client.js` with `crossOrigin="anonymous"`
-- Vercel Analytics integrated via official `@vercel/analytics` package
+- Google Analytics integrated via Google Tag Manager with Partytown
+- Cloudflare Web Analytics integrated via `beacon.min.js` script
 - No Subresource Integrity (SRI) hashes used (not provided by Giscus)
 
 ### Content Security
@@ -203,7 +221,7 @@ These values are public and safe to commit. Comments are displayed via GitHub Di
 
 ## Known Issues & Important Notes
 
-- **Sharp Dependency**: MUST be installed for Astro Image. Vercel builds fail without it (MissingSharp error)
+- **Sharp Dependency**: MUST be installed for Astro Image. Cloudflare Pages builds fail without it (MissingSharp error)
 - React 19 with @astrojs/react may have compatibility issues with hooks
 - Search/filter features are postponed until React compatibility is resolved
 - **Git Commits**:
