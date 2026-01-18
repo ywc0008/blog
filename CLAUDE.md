@@ -11,7 +11,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - **Image Processing**: Sharp 0.34.x (REQUIRED for Astro Image optimization)
 - **Code Highlighting**: Shiki (build-time)
 - **Comments**: Giscus (GitHub Discussions)
-- **Analytics**: Google Analytics (Partytown) + Cloudflare Web Analytics (integrated in BaseLayout.astro)
+- **Analytics**: Google Analytics (Partytown) + Cloudflare Web Analytics (auto-injected via proxy mode)
 - **TypeScript**: 5.x with strict mode
 
 ## Commands
@@ -168,11 +168,10 @@ Project is configured for Cloudflare Pages deployment:
 
 #### Cloudflare Web Analytics
 
-Web Analytics token is configured in `src/layouts/BaseLayout.astro`. To get a new token:
+Web Analytics is **automatically injected** when DNS proxy mode (orange cloud 🟠) is enabled.
+No code changes needed - Cloudflare injects the analytics script automatically.
 
-1. Cloudflare Dashboard → Analytics & Logs → Web Analytics
-2. Add a site → Enter domain
-3. Copy the token to `data-cf-beacon` attribute
+To view analytics: Cloudflare Dashboard → Analytics & Logs → Web Analytics
 
 ### Giscus Configuration
 
@@ -209,7 +208,7 @@ These values are public and safe to commit. Comments are displayed via GitHub Di
 
 - Giscus script loaded from `https://giscus.app/client.js` with `crossOrigin="anonymous"`
 - Google Analytics integrated via Google Tag Manager with Partytown
-- Cloudflare Web Analytics integrated via `beacon.min.js` script
+- Cloudflare Web Analytics auto-injected via proxy mode (no manual script needed)
 - No Subresource Integrity (SRI) hashes used (not provided by Giscus)
 
 ### Content Security
