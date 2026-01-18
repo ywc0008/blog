@@ -1,6 +1,6 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
-  "name": "ywc-life-blog",
+  "name": "ywc.life",
   "compatibility_date": "2026-01-18",
   "pages_build_output_dir": "./dist"
 }
