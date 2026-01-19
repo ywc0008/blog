@@ -43,7 +43,7 @@ pnpm check              # TypeScript type checking (astro check)
 
 - **React (.tsx)**: Components with useState, useEffect, onClick handlers
 - **Astro (.astro)**: Everything else (layouts, static UI, wrappers)
-- Current React components: None (search feature postponed due to React 19 compatibility)
+- Current React components: None (all features implemented with Astro + vanilla JS)
 
 ### Content Management
 
@@ -119,7 +119,8 @@ draft: boolean
 - `src/layouts/BaseLayout.astro`: Base HTML structure, SEO component
 - `src/components/astro/SEO.astro`: Reusable SEO meta tags (OG, Twitter Card)
 - `src/components/astro/Card.astro`: Blog post card with hero image, category, tags links
-- `src/components/astro/Header.astro`: Navigation with Development/Library categories
+- `src/components/astro/Header.astro`: Navigation with Development/Library categories + Search
+- `src/components/astro/Search.astro`: Pagefind search modal with ⌘K shortcut (is:inline script)
 - `src/components/astro/Footer.astro`: Footer with RSS and GitHub links
 - `src/components/astro/TOC.astro`: Table of contents with Intersection Observer for current section highlighting
 - `src/pages/posts/[slug].astro`: Post detail page with hero image display and TOC sidebar
@@ -127,13 +128,21 @@ draft: boolean
 - `.nvmrc`: Node 20 for Cloudflare Pages deployment
 - `wrangler.jsonc`: Cloudflare Pages configuration
 
+### Search (Pagefind)
+
+- **Implementation**: `src/components/astro/Search.astro` with `is:inline` script
+- **Build**: `astro build && pagefind --site dist` (package.json build script)
+- **Keyboard Shortcut**: ⌘K (Mac) / Ctrl+K (Windows) to open search modal
+- **Indexing**: Pagefind creates static search index at build time in `/pagefind/`
+- **Testing**: Search only works in `pnpm preview` (not `pnpm dev`) because index is generated at build time
+
 ## Development Constraints
 
 - **No SSR**: Static generation only (`astro build`)
-- **Build-time processing**: MDX, Shiki, image optimization all at build time
+- **Build-time processing**: MDX, Shiki, Pagefind, image optimization all at build time
 - **No state management libraries**: Use Astro's built-in features
 - **No dark mode**: Removed for simplicity
-- **Search feature postponed**: React 19 + @astrojs/react compatibility issues
+- **is:inline scripts**: Must use pure JavaScript (no TypeScript syntax like `as` casts)
 
 ## Deployment
 
@@ -221,11 +230,11 @@ These values are public and safe to commit. Comments are displayed via GitHub Di
 ## Known Issues & Important Notes
 
 - **Sharp Dependency**: MUST be installed for Astro Image. Cloudflare Pages builds fail without it (MissingSharp error)
-- React 19 with @astrojs/react may have compatibility issues with hooks
-- Search/filter features are postponed until React compatibility is resolved
+- **Pagefind Dev Mode**: Search doesn't work in `pnpm dev` - use `pnpm build && pnpm preview` to test
+- **is:inline Scripts**: Cannot use TypeScript syntax (no `as HTMLElement`, no type annotations)
 - **Git Commits**:
   - Write commit messages in Korean (project convention)
-  - DO NOT add "Co-Authored-By: Claude Sonnet 4.5" to commit messages
+  - DO NOT add "Co-Authored-By" to commit messages
   - Follow conventional commits format: `feat:`, `fix:`, `docs:`, `design:`, etc.
 
 <!-- MANUAL ADDITIONS START -->
