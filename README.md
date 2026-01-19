@@ -11,8 +11,9 @@
 - **TailwindCSS 4.x** - Utility-first CSS
 - **MDX** - Content Collections API
 - **Sharp** - Image optimization
+- **Pagefind** - 정적 검색 (⌘K)
 - **Giscus** - GitHub Discussions 기반 댓글
-- **Vercel Analytics** - 실시간 트래픽 분석
+- **Cloudflare Pages** - 호스팅 & Web Analytics
 
 ## 💬 댓글
 
