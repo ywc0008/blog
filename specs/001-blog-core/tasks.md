@@ -91,17 +91,17 @@
 
 ### Implementation for User Story 2
 
-- [ ] T033 [P] [US2] Create search index API endpoint in src/pages/api/posts.json.ts (export GET function, fetch all non-draft posts, return JSON with slug/title/description/category/tags/pubDate) **[POSTPONED: React 19 compatibility]**
-- [ ] T034 [P] [US2] Create search utility in src/utils/search.ts (fuzzy search logic, filter by query, highlight matches) **[POSTPONED: React 19 compatibility]**
-- [ ] T035 [P] [US2] Create SearchModal component in src/components/react/SearchModal.tsx (fetch /api/posts.json, search input state, filtered results rendering) **[POSTPONED: React 19 compatibility]**
-- [ ] T036 [US2] Add keyboard listener for Cmd+K/Ctrl+K to open SearchModal (global event listener in BaseLayout) **[POSTPONED: React 19 compatibility]**
-- [ ] T037 [US2] Integrate SearchModal into BaseLayout with client:idle directive **[POSTPONED: React 19 compatibility]**
+- [x] T033 [P] [US2] ~~Create search index API endpoint~~ **[REPLACED: Pagefind 정적 검색으로 대체 - 빌드 타임 인덱싱]**
+- [x] T034 [P] [US2] ~~Create search utility~~ **[REPLACED: Pagefind 내장 검색 사용]**
+- [x] T035 [P] [US2] ~~Create SearchModal component~~ **[REPLACED: src/components/astro/Search.astro로 구현]**
+- [x] T036 [US2] Add keyboard listener for Cmd+K/Ctrl+K to open SearchModal ✅ **[DONE: Search.astro에 구현]**
+- [x] T037 [US2] Integrate SearchModal into Header ✅ **[DONE: Header.astro에 Search 컴포넌트 통합]**
 - [x] T038 [P] [US2] Create category filter page in src/pages/categories/[category].astro (getStaticPaths from categories.json, filter posts by category)
 - [x] T039 [P] [US2] Create tag filter page in src/pages/tags/[tag].astro (getStaticPaths from all tags, filter posts by tag)
 - [x] T040 [US2] Add category and tag links to Card component
 - [ ] T041 [US2] Add sorting controls to post list page (latest/oldest toggle, update getCollection sort)
 - [ ] T042 [US2] Add pagination to post list page (10 posts per page, page navigation)
-- [ ] T043 [US2] Style SearchModal with TailwindCSS (modal overlay, search input, results list) **[POSTPONED: React 19 compatibility]**
+- [x] T043 [US2] Style SearchModal with TailwindCSS ✅ **[DONE: Search.astro에 TailwindCSS 스타일링 적용]**
 
 **Checkpoint**: At this point, User Stories 1 AND 2 should both work independently
 
@@ -136,11 +136,11 @@
 
 - [ ] T054 [P] Create Button component in src/components/react/Button.tsx (generic button with onClick, variants for primary/secondary/ghost)
 - [ ] T055 [P] Replace inline buttons with Button component across all pages
-- [ ] T056 [P] Add error handling to SearchModal (display message when fetch fails)
-- [ ] T057 [P] Add loading states to SearchModal (skeleton UI while fetching)
+- [x] T056 [P] Add error handling to SearchModal ✅ **[DONE: Search.astro setErrorState 함수]**
+- [x] T057 [P] Add loading states to SearchModal ✅ **[DONE: Search.astro setLoadingState 함수]**
 - [ ] T058 [P] Add empty state to post list page ("No posts yet" message)
-- [ ] T059 [P] Add empty state to search results ("No results found" message)
-- [ ] T060 [P] Optimize images with Astro Image component (WebP conversion, lazy loading, srcset)
+- [x] T059 [P] Add empty state to search results ✅ **[DONE: "검색 결과가 없습니다" 메시지]**
+- [x] T060 [P] Optimize images with Astro Image component ✅ **[DONE: Card.astro, [slug].astro에서 Image 컴포넌트 사용]**
 - [ ] T061 [P] Add breadcrumb navigation to post detail page
 - [ ] T062 [P] Add "Back to top" button to long posts
 - [ ] T063 [P] Add social share buttons to post detail page (Twitter, Facebook, LinkedIn)
