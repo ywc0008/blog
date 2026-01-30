@@ -7,11 +7,14 @@ export interface Props {
   description?: string;
   image?: string;
   type?: "website" | "article";
+  breadcrumb?: { name: string; url: string }[];
   article?: {
     publishedTime?: string;
     modifiedTime?: string;
     author?: string;
     tags?: string[];
+    section?: string;
+    wordCount?: number;
   };
 }
 
@@ -20,6 +23,7 @@ const {
   description = "개발하면서 배운 것들을 정리하고, 유용한 라이브러리를 소개합니다.",
   image,
   type = "website",
+  breadcrumb,
   article,
 } = Astro.props;
 ---
@@ -34,7 +38,14 @@ const {
 
     <link rel="sitemap" href="/sitemap-index.xml" />
 
-    <SEO title={title} description={description} image={image} type={type} article={article} />
+    <SEO
+      title={title}
+      description={description}
+      image={image}
+      type={type}
+      breadcrumb={breadcrumb}
+      article={article}
+    />
 
     <!-- RSS Feed -->
     <link rel="alternate" type="application/rss+xml" title="ywc.life RSS Feed" href="/rss.xml" />

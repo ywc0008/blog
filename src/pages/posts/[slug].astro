@@ -7,6 +7,7 @@ import Footer from "../../components/astro/Footer.astro";
 import TOC from "../../components/astro/TOC.astro";
 import Comments from "../../components/astro/Comments.astro";
 import { calculateReadingTime } from "../../utils/post";
+import categories from "../../content/categories.json";
 
 export async function getStaticPaths() {
   const posts = await getCollection("blog");
@@ -41,6 +42,21 @@ const formattedUpdatedDate = post.data.updatedDate
       day: "numeric",
     }).format(new Date(post.data.updatedDate))
   : null;
+
+// Word count for structured data
+const wordCount = post.body ? post.body.split(/\s+/).length : 0;
+
+// Find category info for breadcrumb
+const categoryInfo = categories.find((c) => c.name === post.data.category);
+
+// Breadcrumb data for JSON-LD
+const breadcrumb = [
+  { name: "홈", url: "https://ywc.life/" },
+  ...(categoryInfo
+    ? [{ name: categoryInfo.name, url: `https://ywc.life/categories/${categoryInfo.slug}/` }]
+    : []),
+  { name: post.data.title, url: `https://ywc.life/posts/${post.slug}/` },
+];
 ---
 
 <BaseLayout
@@ -48,11 +64,14 @@ const formattedUpdatedDate = post.data.updatedDate
   description={post.data.description}
   image={post.data.heroImage?.src}
   type="article"
+  breadcrumb={breadcrumb}
   article={{
     publishedTime: post.data.pubDate.toISOString(),
     modifiedTime: post.data.updatedDate?.toISOString(),
     author: "ywc",
     tags: post.data.tags,
+    section: post.data.category,
+    wordCount: wordCount,
   }}
 >
   <div class="min-h-screen flex flex-col">
@@ -65,10 +84,14 @@ const formattedUpdatedDate = post.data.updatedDate
           <div class="flex-1 min-w-0">
             <header class="mb-8">
               <div class="flex flex-wrap items-center gap-3 text-sm mb-4">
-                <span class="px-2 py-1 bg-blue-100 text-blue-800 rounded font-medium"
-                  >{post.data.category}</span
+                <a
+                  href={`/categories/${categoryInfo?.slug || post.data.category.toLowerCase()}/`}
+                  class="px-2 py-1 bg-blue-100 text-blue-800 rounded font-medium hover:bg-blue-200 transition-colors"
+                  >{post.data.category}</a
                 >
-                <span class="text-gray-600">{formattedDate}</span>
+                <time datetime={post.data.pubDate.toISOString()} class="text-gray-600"
+                  >{formattedDate}</time
+                >
                 <span class="text-gray-600">{readingTime}분 읽기</span>
               </div>
 
@@ -78,7 +101,10 @@ const formattedUpdatedDate = post.data.updatedDate
               {
                 formattedUpdatedDate && (
                   <p class="text-sm text-gray-500 italic mb-4">
-                    마지막 업데이트: {formattedUpdatedDate}
+                    마지막 업데이트:{" "}
+                    <time datetime={post.data.updatedDate!.toISOString()}>
+                      {formattedUpdatedDate}
+                    </time>
                   </p>
                 )
               }
@@ -86,11 +112,21 @@ const formattedUpdatedDate = post.data.updatedDate
               <div class="flex flex-wrap gap-2">
                 {
                   post.data.tags.map((tag) => (
-                    <span class="px-3 py-1 bg-gray-100 text-gray-700 rounded">{tag}</span>
+                    <a
+                      href={`/tags/${tag.toLowerCase()}/`}
+                      class="px-3 py-1 bg-gray-100 text-gray-700 rounded hover:bg-gray-200 transition-colors"
+                    >
+                      {tag}
+                    </a>
                   ))
                 }
               </div>
             </header>
+
+            <address class="not-italic text-sm text-gray-500 mb-6 flex items-center gap-1">
+              <span>작성자:</span>
+              <a rel="author" href="/" class="text-gray-700 hover:text-gray-900">ywc</a>
+            </address>
 
             {
               post.data.heroImage && (
