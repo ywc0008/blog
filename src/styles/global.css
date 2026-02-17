@@ -69,3 +69,16 @@ html {
 .prose a:hover {
   color: rgb(29 78 216);
 }
+
+/* Mermaid diagram styles */
+.mermaid-diagram {
+  display: flex;
+  justify-content: center;
+  margin: 1.5rem 0;
+  overflow-x: auto;
+}
+
+.mermaid-diagram svg {
+  max-width: 100%;
+  height: auto;
+}
