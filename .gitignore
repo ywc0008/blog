@@ -34,3 +34,6 @@ pnpm-debug.log*
 *.swp
 *.swo
 *~
+
+# oh-my-claudecode
+.omc/
