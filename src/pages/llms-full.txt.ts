@@ -31,7 +31,7 @@ export async function GET(context: APIContext) {
     lines.push(`### ${cat.name}`);
     lines.push("");
     lines.push(`${cat.description}`);
-    lines.push(`URL: ${siteUrl}/categories/${cat.slug}/`);
+    lines.push(`URL: ${siteUrl}/categories/${cat.slug}`);
     lines.push(`포스트 수: ${catPosts.length}`);
     lines.push("");
   }
@@ -45,7 +45,7 @@ export async function GET(context: APIContext) {
       : "";
     lines.push(`### ${post.data.title}`);
     lines.push("");
-    lines.push(`- URL: ${siteUrl}/posts/${post.slug}/`);
+    lines.push(`- URL: ${siteUrl}/posts/${post.slug}`);
     lines.push(`- 날짜: ${date}${updated}`);
     lines.push(`- 카테고리: ${post.data.category}`);
     lines.push(`- 태그: ${post.data.tags.join(", ")}`);
@@ -64,7 +64,7 @@ export async function GET(context: APIContext) {
 
   const sortedTags = Array.from(tagMap.entries()).sort((a, b) => b[1] - a[1]);
   for (const [tag, count] of sortedTags) {
-    lines.push(`- [${tag}](${siteUrl}/tags/${tag.toLowerCase()}/): ${count}개 포스트`);
+    lines.push(`- [${tag}](${siteUrl}/tags/${tag.toLowerCase()}): ${count}개 포스트`);
   }
 
   lines.push("");

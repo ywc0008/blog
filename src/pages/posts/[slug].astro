@@ -54,9 +54,9 @@ const categoryInfo = categories.find((c) => c.name === post.data.category);
 const breadcrumb = [
   { name: "홈", url: "https://ywc.life/" },
   ...(categoryInfo
-    ? [{ name: categoryInfo.name, url: `https://ywc.life/categories/${categoryInfo.slug}/` }]
+    ? [{ name: categoryInfo.name, url: `https://ywc.life/categories/${categoryInfo.slug}` }]
     : []),
-  { name: post.data.title, url: `https://ywc.life/posts/${post.slug}/` },
+  { name: post.data.title, url: `https://ywc.life/posts/${post.slug}` },
 ];
 ---
 
@@ -86,7 +86,7 @@ const breadcrumb = [
             <header class="mb-8">
               <div class="flex flex-wrap items-center gap-3 text-sm mb-4">
                 <a
-                  href={`/categories/${categoryInfo?.slug || post.data.category.toLowerCase()}/`}
+                  href={`/categories/${categoryInfo?.slug || post.data.category.toLowerCase()}`}
                   class="px-2 py-1 bg-blue-100 text-blue-800 rounded font-medium hover:bg-blue-200 transition-colors"
                   >{post.data.category}</a
                 >
@@ -114,7 +114,7 @@ const breadcrumb = [
                 {
                   post.data.tags.map((tag) => (
                     <a
-                      href={`/tags/${tag.toLowerCase()}/`}
+                      href={`/tags/${tag.toLowerCase()}`}
                       class="px-3 py-1 bg-gray-100 text-gray-700 rounded hover:bg-gray-200 transition-colors"
                     >
                       {tag}

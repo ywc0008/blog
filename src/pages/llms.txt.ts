@@ -23,7 +23,7 @@ export async function GET(context: APIContext) {
   for (const cat of categories) {
     const count = publishedPosts.filter((p) => p.data.category === cat.name).length;
     lines.push(
-      `- [${cat.name}](${siteUrl}/categories/${cat.slug}/): ${cat.description} (${count}개 포스트)`
+      `- [${cat.name}](${siteUrl}/categories/${cat.slug}): ${cat.description} (${count}개 포스트)`
     );
   }
 
@@ -32,7 +32,7 @@ export async function GET(context: APIContext) {
   for (const post of publishedPosts.slice(0, 20)) {
     const date = post.data.pubDate.toISOString().split("T")[0];
     lines.push(
-      `- [${post.data.title}](${siteUrl}/posts/${post.slug}/): ${post.data.description} (${date})`
+      `- [${post.data.title}](${siteUrl}/posts/${post.slug}): ${post.data.description} (${date})`
     );
   }
 
