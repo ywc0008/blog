@@ -63,7 +63,7 @@ const breadcrumb = [
 <BaseLayout
   title={`${post.data.title} - ywc.life`}
   description={post.data.description}
-  image={post.data.heroImage?.src}
+  image={`/og/${post.slug}.png`}
   type="article"
   breadcrumb={breadcrumb}
   article={{
