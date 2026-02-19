@@ -13,16 +13,6 @@ const formattedDate = new Intl.DateTimeFormat("ko-KR", {
   month: "long",
   day: "numeric",
 }).format(new Date(post.pubDate));
-
-const categoryColors: Record<string, string> = {
-  Development: "bg-blue-100",
-  Library: "bg-purple-100",
-  Projects: "bg-green-100",
-  Performance: "bg-orange-100",
-  TypeScript: "bg-indigo-100",
-};
-
-const placeholderBg = categoryColors[post.category] || "bg-gray-100";
 ---
 
 <article
@@ -43,8 +33,10 @@ const placeholderBg = categoryColors[post.category] || "bg-gray-100";
       </a>
     ) : (
       <a href={`/posts/${post.slug}`} class="block">
-        <div class={`w-full h-48 ${placeholderBg} flex items-center justify-center`}>
-          <span class="text-4xl font-bold text-gray-400 opacity-50">{post.category.charAt(0)}</span>
+        <div class="w-full h-48 bg-gray-50 flex items-center justify-center p-6">
+          <p class="text-lg font-bold text-gray-700 line-clamp-2 text-center leading-relaxed">
+            {post.title}
+          </p>
         </div>
       </a>
     )
