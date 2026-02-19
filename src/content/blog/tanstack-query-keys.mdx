@@ -141,7 +141,9 @@ queryClient.prefetchQuery({
 });
 ```
 
-**오타?** `todoKeys.detial`이면 TypeScript가 바로 에러를 냅니다. **구조 변경?** `todoKeys` 객체 하나만 수정하면 끝입니다. **기억 의존?** IDE 자동완성이 모든 옵션을 보여줍니다.
+- **오타?** `todoKeys.detial`이면 TypeScript가 바로 에러를 냅니다.
+- **구조 변경?** `todoKeys` 객체 하나만 수정하면 끝입니다.
+- **기억 의존?** IDE 자동완성이 모든 옵션을 보여줍니다.
 
 ### as const가 필요한 이유
 
@@ -390,7 +392,7 @@ src/
 
 ## 대안: @lukemorales/query-key-factory
 
-직접 팩토리 객체를 만드는 것이 번거롭다면, 커뮤니티 라이브러리인 [@lukemorales/query-key-factory](https://github.com/lukemorales/query-key-factory)를 사용할 수도 있습니다.
+직접 팩토리 객체를 만드는 것이 번거롭다면, [@lukemorales/query-key-factory](https://github.com/lukemorales/query-key-factory) 라이브러리를 사용할 수도 있습니다.
 
 ```bash
 pnpm add @lukemorales/query-key-factory
@@ -430,8 +432,6 @@ const queryKeys = mergeQueryKeys(todoKeys, userKeys);
 | **1단계** | `['todos', 'list']` 문자열 직접 사용         | 없음 (문제의 시작)                             |
 | **2단계** | `todoKeys.lists()` Key Factory               | 오타 방지, 중앙 관리, 자동완성                 |
 | **3단계** | `todoQueries.list(filters)` + queryOptions() | 키-함수 동기화, 타입 자동 추론, 설정 오타 검출 |
-
-소규모 프로젝트라면 1단계로도 충분합니다. 쿼리가 10개를 넘어가기 시작하면 2단계를, TypeScript를 적극 활용한다면 3단계를 고려해보세요.
 
 ## 마무리하며
 

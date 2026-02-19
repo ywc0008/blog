@@ -24,8 +24,14 @@ html {
   margin-bottom: 1rem;
 }
 
-.prose ul,
+.prose ul {
+  list-style-type: disc;
+  margin-bottom: 1rem;
+  margin-left: 1.5rem;
+}
+
 .prose ol {
+  list-style-type: decimal;
   margin-bottom: 1rem;
   margin-left: 1.5rem;
 }
@@ -68,6 +74,29 @@ html {
 
 .prose a:hover {
   color: rgb(29 78 216);
+}
+
+.prose table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 1rem;
+}
+
+.prose th {
+  background-color: rgb(243 244 246);
+  font-weight: bold;
+  text-align: left;
+  padding: 0.75rem 1rem;
+  border-bottom: 2px solid rgb(209 213 219);
+}
+
+.prose td {
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid rgb(229 231 235);
+}
+
+.prose tr:last-child td {
+  border-bottom: none;
 }
 
 /* Mermaid diagram styles */
