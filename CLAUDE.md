@@ -57,6 +57,19 @@ pnpm check              # TypeScript type checking (astro check)
 - **Access**: Use `getCollection("blog")` from `astro:content`
 - **Mermaid 다이어그램**: MDX에서 ` ```mermaid ` 코드 블록 사용 시 클라이언트에서 자동 렌더링 (Mermaid.astro가 CDN에서 lazy load)
 
+#### Mermaid 다이어그램 작성 시 주의사항
+
+Mermaid v11 렌더링 시 특수 문자가 파싱 오류를 일으킨다. 다음을 **절대 사용하지 않는다**:
+
+| 금지                               | 대체               | 예시                       |
+| ---------------------------------- | ------------------ | -------------------------- |
+| `\n` (줄바꿈)                      | `<br/>`            | `A["제목<br/>설명"]`       |
+| 이모지 (`✅`, `❌`, `⛔`, `⏳`)    | 텍스트             | `"접근 가능"`              |
+| 꺾쇠괄호 `<>`                      | 소괄호 `()`        | `(encrypted, HttpOnly)`    |
+| 중괄호 `{}` (노드 레이블 내)       | 제거 또는 풀어쓰기 | `accessToken, user`        |
+| 따옴표 중첩                        | 제거               | `accessToken: 새 토큰`     |
+| `<br/>` in sequence diagram `Note` | 한 줄로 작성       | `Note over A: 설명 텍스트` |
+
 #### Blog Post Frontmatter
 
 ```yaml
@@ -253,6 +266,7 @@ These values are public and safe to commit. Comments are displayed via GitHub Di
 - **Pagefind Dev Mode**: Search doesn't work in `pnpm dev` - use `pnpm build && pnpm preview` to test
 - **is:inline Scripts**: Cannot use TypeScript syntax (no `as HTMLElement`, no type annotations)
 - **Astro context.site Trailing Slash**: `context.site`는 `URL` 객체로 `toString()` 시 trailing slash 포함. 경로 결합 시 이중 슬래시(`//`) 발생 주의 → `.toString().replace(/\/$/, "")` 사용
+- **Prettier + MDX 코드 블록**: MDX 내 ` ```typescript ` 블록에서 독립적인 배열/객체 선언(예: `["users", "list"]`)을 작성하면 Prettier가 유효한 JS 표현식으로 해석하여 `["users"]["list"]`처럼 망가뜨린다. 이런 경우 언어 지정 없이 ` ``` `(plain)으로 작성한다.
 - **Git Commits**:
   - Write commit messages in Korean (project convention)
   - DO NOT add "Co-Authored-By" to commit messages
