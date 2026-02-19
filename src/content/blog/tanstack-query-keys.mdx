@@ -9,9 +9,9 @@ draft: false
 
 TanStack Query(구 React Query)를 사용하면서 처음에는 Query Key를 대충 `['todos']` 같이 쓰다가, 프로젝트가 커지면서 "이 키가 뭐였더라?" 하는 순간이 옵니다.
 
-이 문제를 해결하는 **Query Key Factory 패턴**을 단계별로 알아보겠습니다. TanStack Query 메인테이너인 TkDodo(Dominik Dorfmeister)가 제안한 이 패턴은 커뮤니티에서 사실상 표준으로 자리잡았습니다.
+이 문제를 해결하는 **Query Key Factory 패턴**을 단계별로 알아봅니다. 이 글을 읽으면 오타 걱정 없이 타입 안전한 Query Key를 설계하고, `queryOptions()`로 키와 함수를 하나로 묶어 유지보수성을 높일 수 있습니다. TanStack Query 메인테이너인 TkDodo(Dominik Dorfmeister)가 제안한 이 패턴은 커뮤니티에서 사실상 표준으로 자리잡았습니다.
 
-## Query Key를 문자열로 직접 쓰면 생기는 문제
+## 문자열 Query Key의 문제점
 
 프로젝트가 커지면 같은 Query Key를 여러 파일에서 반복 사용하게 됩니다.
 
@@ -59,7 +59,7 @@ Query Key를 설계할 때 가장 중요한 원칙은 **넓은 범위에서 좁�
 ['todos', 'detail', 2]                   // 2번 할일 상세
 ```
 
-이렇게 하면 `invalidateQueries`의 **prefix 매칭**을 활용할 수 있습니다.
+이렇게 하면 `invalidateQueries`의 **접두사 매칭(prefix matching)**을 활용할 수 있습니다.
 
 ```typescript
 // ['todos']로 시작하는 모든 쿼리 무효화
@@ -99,14 +99,14 @@ todoKeys.detail(1); // ['todos', 'detail', 1]
 
 계층 구조로 보면 이렇습니다.
 
-```
-todoKeys.all  →  ['todos']
-├── todoKeys.lists()  →  ['todos', 'list']
-│   ├── todoKeys.list('all')   →  ['todos', 'list', { filters: 'all' }]
-│   └── todoKeys.list('done')  →  ['todos', 'list', { filters: 'done' }]
-└── todoKeys.details()  →  ['todos', 'detail']
-    ├── todoKeys.detail(1)  →  ['todos', 'detail', 1]
-    └── todoKeys.detail(2)  →  ['todos', 'detail', 2]
+```mermaid
+flowchart TD
+    A["todoKeys.all<br/>( todos )"] --> B["todoKeys.lists()<br/>( todos, list )"]
+    A --> C["todoKeys.details()<br/>( todos, detail )"]
+    B --> D["todoKeys.list( all )<br/>( todos, list, filters: all )"]
+    B --> E["todoKeys.list( done )<br/>( todos, list, filters: done )"]
+    C --> F["todoKeys.detail( 1 )<br/>( todos, detail, 1 )"]
+    C --> G["todoKeys.detail( 2 )<br/>( todos, detail, 2 )"]
 ```
 
 각 함수가 **상위 키를 spread**하면서 만들어지기 때문에, "일반적 → 구체적" 구조가 자동으로 보장됩니다.
@@ -165,7 +165,7 @@ const keys = {
 
 `as const` 없이는 TypeScript가 `string[]`으로 넓게 추론합니다. 그러면 `['todos']`와 `['users']`가 같은 타입이 되어버려서, 잘못된 키를 전달해도 에러가 나지 않습니다. `as const`를 사용하면 **정확한 튜플 타입**이 되어 키 간의 구분이 타입 레벨에서 보장됩니다.
 
-## queryOptions()와 결합하기
+## queryOptions()와의 결합
 
 여기까지만 해도 충분히 유용하지만, 한 가지 아쉬운 점이 있습니다. **Query Key와 Query Function이 여전히 따로 놀고 있다는 것**입니다.
 
@@ -310,7 +310,7 @@ function TodoList({ filters }: { filters: string }) {
 }
 
 function TodoDetail({ id }: { id: number }) {
-  // Suspense와도 동일하게 사용
+  // React Suspense(로딩 상태를 선언적으로 처리하는 패턴)와도 동일하게 사용
   const { data: todo } = useSuspenseQuery(todoQueries.detail(id))
 
   return <h1>{todo.title}</h1>
