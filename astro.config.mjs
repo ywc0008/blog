@@ -11,6 +11,9 @@ import partytown from "@astrojs/partytown";
 export default defineConfig({
   site: "https://ywc.life",
   trailingSlash: "never",
+  build: {
+    format: "file",
+  },
   integrations: [
     react(),
     mdx(),
