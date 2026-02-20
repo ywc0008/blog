@@ -11,13 +11,13 @@ draft: false
 > **참고:** 이 문서는 [Vercel Engineering의 React Best Practices](https://github.com/vercel-labs/agent-skills/tree/main/skills/react-best-practices) 전문을 번역한 것입니다.
 
 > **Note:**
-> 이 문서는 주로 AI 에이전트와 LLM이 Vercel에서 React 및 Next.js 코드베이스를 유지보수, 생성 또는 리팩토링할 때 따르도록 설계되었습니다. 사람도 유용하게 활용할 수 있지만, 여기의 지침은 AI 지원 워크플로우의 자동화와 일관성에 최적화되어 있습니다.
+> 이 문서는 주로 AI 에이전트와 LLM이 Vercel에서 React 및 Next.js 코드베이스를 유지보수, 생성 또는 리팩토링할 때 따르도록 설계되었어요. 사람도 유용하게 활용할 수 있지만, 여기의 지침은 AI 지원 워크플로우의 자동화와 일관성에 최적화되어 있어요.
 
 ---
 
 ## 개요
 
-React 및 Next.js 애플리케이션을 위한 종합 성능 최적화 가이드입니다. AI 에이전트와 LLM을 위해 설계되었습니다. 8개 카테고리에 걸쳐 40개 이상의 규칙을 포함하며, Critical(워터폴 제거, 번들 크기 감소)부터 점진적 개선(고급 패턴)까지 영향도 기준으로 우선순위가 매겨져 있습니다. 각 규칙에는 상세한 설명, 잘못된 구현과 올바른 구현을 비교하는 실제 예제, 그리고 자동화된 리팩토링 및 코드 생성을 안내하는 구체적인 영향도 지표가 포함되어 있습니다.
+React 및 Next.js 애플리케이션을 위한 종합 성능 최적화 가이드예요. AI 에이전트와 LLM을 위해 설계되었어요. 8개 카테고리에 걸쳐 40개 이상의 규칙을 포함하며, Critical(워터폴 제거, 번들 크기 감소)부터 점진적 개선(고급 패턴)까지 영향도 기준으로 우선순위가 매겨져 있어요. 각 규칙에는 상세한 설명, 잘못된 구현과 올바른 구현을 비교하는 실제 예제, 그리고 자동화된 리팩토링 및 코드 생성을 안내하는 구체적인 영향도 지표가 포함되어 있어요.
 
 ---
 
@@ -83,13 +83,13 @@ React 및 Next.js 애플리케이션을 위한 종합 성능 최적화 가이드
 
 **영향도: CRITICAL**
 
-워터폴은 성능의 #1 킬러입니다. 순차적인 await마다 전체 네트워크 지연 시간이 추가됩니다. 워터폴을 제거하면 가장 큰 개선 효과를 얻을 수 있습니다.
+워터폴은 성능의 #1 킬러예요. 순차적인 await마다 전체 네트워크 지연 시간이 추가돼요. 워터폴을 제거하면 가장 큰 개선 효과를 얻을 수 있어요.
 
 ### 1.1 필요할 때까지 Await 지연하기
 
 **영향도: HIGH (사용되지 않는 코드 경로 차단 방지)**
 
-`await` 작업을 실제로 사용되는 분기로 이동시켜 필요하지 않은 코드 경로를 차단하지 않도록 합니다.
+`await` 작업을 실제로 사용되는 분기로 이동시켜 필요하지 않은 코드 경로를 차단하지 않도록 해요.
 
 **잘못된 예: 두 분기 모두 차단**
 
@@ -159,13 +159,13 @@ async function updateResource(resourceId: string, userId: string) {
 }
 ```
 
-이 최적화는 건너뛰는 분기가 자주 실행되거나, 지연된 작업이 비용이 많이 드는 경우 특히 유용합니다.
+이 최적화는 건너뛰는 분기가 자주 실행되거나, 지연된 작업이 비용이 많이 드는 경우 특히 유용해요.
 
 ### 1.2 의존성 기반 병렬화
 
 **영향도: CRITICAL (2-10배 개선)**
 
-부분적인 의존성이 있는 작업의 경우 `better-all`을 사용하여 병렬성을 최대화합니다. 각 작업을 가능한 가장 빠른 시점에 자동으로 시작합니다.
+부분적인 의존성이 있는 작업의 경우 `better-all`을 사용하여 병렬성을 최대화해요. 각 작업을 가능한 가장 빠른 시점에 자동으로 시작해요.
 
 **잘못된 예: profile이 불필요하게 config를 기다림**
 
@@ -198,7 +198,7 @@ const { user, config, profile } = await all({
 
 **영향도: CRITICAL (2-10배 개선)**
 
-API 라우트와 Server Actions에서는 아직 await하지 않더라도 독립적인 작업을 즉시 시작합니다.
+API 라우트와 Server Actions에서는 아직 await하지 않더라도 독립적인 작업을 즉시 시작해요.
 
 **잘못된 예: config가 auth를 기다리고, data가 둘 다 기다림**
 
@@ -223,13 +223,13 @@ export async function GET(request: Request) {
 }
 ```
 
-더 복잡한 의존성 체인이 있는 작업의 경우 `better-all`을 사용하여 자동으로 병렬성을 최대화합니다(의존성 기반 병렬화 참조).
+더 복잡한 의존성 체인이 있는 작업의 경우 `better-all`을 사용하여 자동으로 병렬성을 최대화해요(의존성 기반 병렬화 참조).
 
 ### 1.4 독립적인 작업에 Promise.all() 사용
 
 **영향도: CRITICAL (2-10배 개선)**
 
-비동기 작업 간에 상호 의존성이 없으면 `Promise.all()`을 사용하여 동시에 실행합니다.
+비동기 작업 간에 상호 의존성이 없으면 `Promise.all()`을 사용하여 동시에 실행해요.
 
 **잘못된 예: 순차 실행, 3번의 라운드 트립**
 
@@ -249,7 +249,7 @@ const [user, posts, comments] = await Promise.all([fetchUser(), fetchPosts(), fe
 
 **영향도: HIGH (더 빠른 초기 페인트)**
 
-비동기 컴포넌트에서 JSX를 반환하기 전에 데이터를 await하는 대신, Suspense 경계를 사용하여 데이터가 로드되는 동안 래퍼 UI를 더 빠르게 표시합니다.
+비동기 컴포넌트에서 JSX를 반환하기 전에 데이터를 await하는 대신, Suspense 경계를 사용하여 데이터가 로드되는 동안 래퍼 UI를 더 빠르게 표시해요.
 
 **잘못된 예: 래퍼가 데이터 페칭에 의해 차단됨**
 
@@ -270,7 +270,7 @@ async function Page() {
 }
 ```
 
-중간 섹션만 데이터가 필요한데도 전체 레이아웃이 데이터를 기다립니다.
+중간 섹션만 데이터가 필요한데도 전체 레이아웃이 데이터를 기다려요.
 
 **올바른 예: 래퍼가 즉시 표시되고, 데이터가 스트리밍됨**
 
@@ -296,7 +296,7 @@ async function DataDisplay() {
 }
 ```
 
-Sidebar, Header, Footer는 즉시 렌더링됩니다. DataDisplay만 데이터를 기다립니다.
+Sidebar, Header, Footer는 즉시 렌더링돼요. DataDisplay만 데이터를 기다려요.
 
 **대안: 컴포넌트 간 promise 공유**
 
@@ -329,7 +329,7 @@ function DataSummary({ dataPromise }: { dataPromise: Promise<Data> }) {
 }
 ```
 
-두 컴포넌트가 같은 promise를 공유하므로 fetch는 한 번만 발생합니다. 레이아웃은 즉시 렌더링되고 두 컴포넌트가 함께 기다립니다.
+두 컴포넌트가 같은 promise를 공유하므로 fetch는 한 번만 발생해요. 레이아웃은 즉시 렌더링되고 두 컴포넌트가 함께 기다려요.
 
 **이 패턴을 사용하지 말아야 할 때:**
 
@@ -346,17 +346,17 @@ function DataSummary({ dataPromise }: { dataPromise: Promise<Data> }) {
 
 **영향도: CRITICAL**
 
-초기 번들 크기를 줄이면 Time to Interactive와 Largest Contentful Paint가 개선됩니다.
+초기 번들 크기를 줄이면 Time to Interactive와 Largest Contentful Paint가 개선돼요.
 
 ### 2.1 Barrel 파일 Import 피하기
 
 **영향도: CRITICAL (200-800ms import 비용, 느린 빌드)**
 
-barrel 파일 대신 소스 파일에서 직접 import하여 수천 개의 사용되지 않는 모듈 로딩을 피합니다. **Barrel 파일**은 여러 모듈을 re-export하는 진입점입니다(예: `export * from './module'`을 하는 `index.js`).
+barrel 파일 대신 소스 파일에서 직접 import하여 수천 개의 사용되지 않는 모듈 로딩을 피해요. **Barrel 파일**은 여러 모듈을 re-export하는 진입점이에요(예: `export * from './module'`을 하는 `index.js`).
 
-인기 있는 아이콘 및 컴포넌트 라이브러리는 진입 파일에 **최대 10,000개의 re-export**가 있을 수 있습니다. 많은 React 패키지에서 **import하는 데만 200-800ms가 소요**되어 개발 속도와 프로덕션 콜드 스타트 모두에 영향을 미칩니다.
+인기 있는 아이콘 및 컴포넌트 라이브러리는 진입 파일에 **최대 10,000개의 re-export**가 있을 수 있어요. 많은 React 패키지에서 **import하는 데만 200-800ms가 소요**되어 개발 속도와 프로덕션 콜드 스타트 모두에 영향을 미쳐요.
 
-**트리 쉐이킹이 도움이 되지 않는 이유:** 라이브러리가 external로 표시되면(번들되지 않음) 번들러가 최적화할 수 없습니다. 트리 쉐이킹을 활성화하기 위해 번들하면 전체 모듈 그래프를 분석하느라 빌드가 상당히 느려집니다.
+**트리 쉐이킹이 도움이 되지 않는 이유:** 라이브러리가 external로 표시되면(번들되지 않음) 번들러가 최적화할 수 없어요. 트리 쉐이킹을 활성화하기 위해 번들하면 전체 모듈 그래프를 분석하느라 빌드가 상당히 느려져요.
 
 **잘못된 예: 전체 라이브러리를 import**
 
@@ -392,12 +392,12 @@ module.exports = {
   },
 };
 
-// 그러면 편리한 barrel import를 유지할 수 있습니다:
+// 그러면 편리한 barrel import를 유지할 수 있어요:
 import { Check, X, Menu } from "lucide-react";
 // 빌드 시 자동으로 직접 import로 변환됨
 ```
 
-직접 import는 15-70% 더 빠른 dev 부팅, 28% 더 빠른 빌드, 40% 더 빠른 콜드 스타트, 그리고 상당히 더 빠른 HMR을 제공합니다.
+직접 import는 15-70% 더 빠른 dev 부팅, 28% 더 빠른 빌드, 40% 더 빠른 콜드 스타트, 그리고 상당히 더 빠른 HMR을 제공해요.
 
 일반적으로 영향받는 라이브러리: `lucide-react`, `@mui/material`, `@mui/icons-material`, `@tabler/icons-react`, `react-icons`, `@headlessui/react`, `@radix-ui/react-*`, `lodash`, `ramda`, `date-fns`, `rxjs`, `react-use`.
 
@@ -407,7 +407,7 @@ import { Check, X, Menu } from "lucide-react";
 
 **영향도: HIGH (필요할 때만 대용량 데이터 로드)**
 
-기능이 활성화될 때만 대용량 데이터나 모듈을 로드합니다.
+기능이 활성화될 때만 대용량 데이터나 모듈을 로드해요.
 
 **예: 애니메이션 프레임 지연 로딩**
 
@@ -428,13 +428,13 @@ function AnimationPlayer({ enabled }: { enabled: boolean }) {
 }
 ```
 
-`typeof window !== 'undefined'` 체크는 이 모듈이 SSR용으로 번들되는 것을 방지하여 서버 번들 크기와 빌드 속도를 최적화합니다.
+`typeof window !== 'undefined'` 체크는 이 모듈이 SSR용으로 번들되는 것을 방지하여 서버 번들 크기와 빌드 속도를 최적화해요.
 
 ### 2.3 비핵심 서드파티 라이브러리 지연 로딩
 
 **영향도: MEDIUM (hydration 후 로드)**
 
-Analytics, 로깅, 에러 트래킹은 사용자 상호작용을 차단하지 않습니다. hydration 후에 로드합니다.
+Analytics, 로깅, 에러 트래킹은 사용자 상호작용을 차단하지 않아요. hydration 후에 로드해요.
 
 **잘못된 예: 초기 번들을 차단**
 
@@ -478,7 +478,7 @@ export default function RootLayout({ children }) {
 
 **영향도: CRITICAL (TTI와 LCP에 직접 영향)**
 
-`next/dynamic`을 사용하여 초기 렌더링에 필요하지 않은 대용량 컴포넌트를 지연 로딩합니다.
+`next/dynamic`을 사용하여 초기 렌더링에 필요하지 않은 대용량 컴포넌트를 지연 로딩해요.
 
 **잘못된 예: Monaco가 메인 청크와 함께 번들됨 ~300KB**
 
@@ -508,7 +508,7 @@ function CodePanel({ code }: { code: string }) {
 
 **영향도: MEDIUM (체감 지연 시간 감소)**
 
-무거운 번들이 필요하기 전에 프리로드하여 체감 지연 시간을 줄입니다.
+무거운 번들이 필요하기 전에 프리로드하여 체감 지연 시간을 줄여요.
 
 **예: hover/focus 시 프리로드**
 
@@ -542,7 +542,7 @@ function FlagsProvider({ children, flags }: Props) {
 }
 ```
 
-`typeof window !== 'undefined'` 체크는 프리로드된 모듈이 SSR용으로 번들되는 것을 방지하여 서버 번들 크기와 빌드 속도를 최적화합니다.
+`typeof window !== 'undefined'` 체크는 프리로드된 모듈이 SSR용으로 번들되는 것을 방지하여 서버 번들 크기와 빌드 속도를 최적화해요.
 
 ---
 
@@ -550,13 +550,13 @@ function FlagsProvider({ children, flags }: Props) {
 
 **영향도: HIGH**
 
-서버 사이드 렌더링과 데이터 페칭을 최적화하면 서버 사이드 워터폴을 제거하고 응답 시간을 줄입니다.
+서버 사이드 렌더링과 데이터 페칭을 최적화하면 서버 사이드 워터폴을 제거하고 응답 시간을 줄여요.
 
 ### 3.1 요청 간 LRU 캐싱
 
 **영향도: HIGH (요청 간 캐싱)**
 
-`React.cache()`는 하나의 요청 내에서만 작동합니다. 순차적인 요청 간에 공유되는 데이터(사용자가 버튼 A를 클릭한 다음 버튼 B를 클릭)의 경우 LRU 캐시를 사용합니다.
+`React.cache()`는 하나의 요청 내에서만 작동해요. 순차적인 요청 간에 공유되는 데이터(사용자가 버튼 A를 클릭한 다음 버튼 B를 클릭)의 경우 LRU 캐시를 사용해요.
 
 **구현:**
 
@@ -581,9 +581,9 @@ export async function getUser(id: string) {
 // 요청 2: 캐시 히트, DB 쿼리 없음
 ```
 
-순차적인 사용자 액션이 몇 초 내에 같은 데이터가 필요한 여러 엔드포인트에 도달할 때 사용합니다.
+순차적인 사용자 액션이 몇 초 내에 같은 데이터가 필요한 여러 엔드포인트에 도달할 때 사용해요.
 
-**Vercel의 [Fluid Compute](https://vercel.com/docs/fluid-compute) 사용 시:** LRU 캐싱은 특히 효과적입니다. 여러 동시 요청이 같은 함수 인스턴스와 캐시를 공유할 수 있기 때문입니다. 이는 Redis 같은 외부 스토리지 없이도 요청 간에 캐시가 유지된다는 것을 의미합니다.
+**Vercel의 [Fluid Compute](https://vercel.com/docs/fluid-compute) 사용 시:** LRU 캐싱은 특히 효과적이에요. 여러 동시 요청이 같은 함수 인스턴스와 캐시를 공유할 수 있기 때문이에요. 이는 Redis 같은 외부 스토리지 없이도 요청 간에 캐시가 유지된다는 것을 의미해요.
 
 **기존 서버리스에서:** 각 호출이 격리되어 실행되므로 프로세스 간 캐싱을 위해 Redis를 고려하세요.
 
@@ -593,7 +593,7 @@ export async function getUser(id: string) {
 
 **영향도: HIGH (데이터 전송 크기 감소)**
 
-React Server/Client 경계는 모든 객체 속성을 문자열로 직렬화하여 HTML 응답과 후속 RSC 요청에 포함합니다. 이 직렬화된 데이터는 페이지 용량과 로드 시간에 직접 영향을 미치므로 **크기가 매우 중요합니다**. 클라이언트가 실제로 사용하는 필드만 전달하세요.
+React Server/Client 경계는 모든 객체 속성을 문자열로 직렬화하여 HTML 응답과 후속 RSC 요청에 포함해요. 이 직렬화된 데이터는 페이지 용량과 로드 시간에 직접 영향을 미치므로 **크기가 매우 중요해요**. 클라이언트가 실제로 사용하는 필드만 전달하세요.
 
 **잘못된 예: 50개 필드 모두 직렬화**
 
@@ -627,7 +627,7 @@ function Profile({ name }: { name: string }) {
 
 **영향도: CRITICAL (서버 사이드 워터폴 제거)**
 
-React Server Components는 트리 내에서 순차적으로 실행됩니다. 합성을 통해 재구조화하여 데이터 페칭을 병렬화합니다.
+React Server Components는 트리 내에서 순차적으로 실행돼요. 합성을 통해 재구조화하여 데이터 페칭을 병렬화해요.
 
 **잘못된 예: Sidebar가 Page의 fetch 완료를 기다림**
 
@@ -702,7 +702,7 @@ export default function Page() {
 
 **영향도: MEDIUM (요청 내 중복 제거)**
 
-서버 사이드 요청 중복 제거를 위해 `React.cache()`를 사용합니다. 인증 및 데이터베이스 쿼리가 가장 많은 이점을 얻습니다.
+서버 사이드 요청 중복 제거를 위해 `React.cache()`를 사용해요. 인증 및 데이터베이스 쿼리가 가장 많은 이점을 얻어요.
 
 **사용법:**
 
@@ -718,13 +718,13 @@ export const getCurrentUser = cache(async () => {
 });
 ```
 
-단일 요청 내에서 `getCurrentUser()`를 여러 번 호출해도 쿼리는 한 번만 실행됩니다.
+단일 요청 내에서 `getCurrentUser()`를 여러 번 호출해도 쿼리는 한 번만 실행돼요.
 
 ### 3.5 비차단 작업에 after() 사용
 
 **영향도: MEDIUM (더 빠른 응답 시간)**
 
-Next.js의 `after()`를 사용하여 응답이 전송된 후 실행해야 하는 작업을 예약합니다. 이렇게 하면 로깅, analytics 및 기타 부수 효과가 응답을 차단하는 것을 방지합니다.
+Next.js의 `after()`를 사용하여 응답이 전송된 후 실행해야 하는 작업을 예약해요. 이렇게 하면 로깅, analytics 및 기타 부수 효과가 응답을 차단하는 것을 방지해요.
 
 **잘못된 예: 응답을 차단**
 
@@ -772,7 +772,7 @@ export async function POST(request: Request) {
 }
 ```
 
-응답이 즉시 전송되고 로깅은 백그라운드에서 발생합니다.
+응답이 즉시 전송되고 로깅은 백그라운드에서 발생해요.
 
 **일반적인 사용 사례:**
 
@@ -784,8 +784,8 @@ export async function POST(request: Request) {
 
 **중요 참고:**
 
-- `after()`는 응답이 실패하거나 리디렉션되어도 실행됩니다
-- Server Actions, Route Handlers, Server Components에서 작동합니다
+- `after()`는 응답이 실패하거나 리디렉션되어도 실행돼요
+- Server Actions, Route Handlers, Server Components에서 작동해요
 
 참고: [https://nextjs.org/docs/app/api-reference/functions/after](https://nextjs.org/docs/app/api-reference/functions/after)
 
@@ -795,13 +795,13 @@ export async function POST(request: Request) {
 
 **영향도: MEDIUM-HIGH**
 
-자동 중복 제거와 효율적인 데이터 페칭 패턴은 중복 네트워크 요청을 줄입니다.
+자동 중복 제거와 효율적인 데이터 페칭 패턴은 중복 네트워크 요청을 줄여요.
 
 ### 4.1 전역 이벤트 리스너 중복 제거
 
 **영향도: LOW (N개 컴포넌트에 단일 리스너)**
 
-`useSWRSubscription()`을 사용하여 컴포넌트 인스턴스 간에 전역 이벤트 리스너를 공유합니다.
+`useSWRSubscription()`을 사용하여 컴포넌트 인스턴스 간에 전역 이벤트 리스너를 공유해요.
 
 **잘못된 예: N개 인스턴스 = N개 리스너**
 
@@ -819,7 +819,7 @@ function useKeyboardShortcut(key: string, callback: () => void) {
 }
 ```
 
-`useKeyboardShortcut` 훅을 여러 번 사용하면 각 인스턴스가 새 리스너를 등록합니다.
+`useKeyboardShortcut` 훅을 여러 번 사용하면 각 인스턴스가 새 리스너를 등록해요.
 
 **올바른 예: N개 인스턴스 = 1개 리스너**
 
@@ -875,7 +875,7 @@ function Profile() {
 
 **영향도: MEDIUM-HIGH (자동 중복 제거)**
 
-SWR은 컴포넌트 인스턴스 간 요청 중복 제거, 캐싱 및 재검증을 활성화합니다.
+SWR은 컴포넌트 인스턴스 간 요청 중복 제거, 캐싱 및 재검증을 활성화해요.
 
 **잘못된 예: 중복 제거 없음, 각 인스턴스가 fetch**
 
@@ -929,7 +929,7 @@ function UpdateButton() {
 
 **영향도: MEDIUM**
 
-불필요한 리렌더를 줄이면 낭비되는 계산을 최소화하고 UI 반응성을 개선합니다.
+불필요한 리렌더를 줄이면 낭비되는 계산을 최소화하고 UI 반응성이 개선돼요.
 
 ### 5.1 사용 시점까지 상태 읽기 지연
 
@@ -970,7 +970,7 @@ function ShareButton({ chatId }: { chatId: string }) {
 
 **영향도: MEDIUM (조기 반환 활성화)**
 
-비싼 작업을 메모이즈된 컴포넌트로 추출하여 계산 전 조기 반환을 활성화합니다.
+비싼 작업을 메모이즈된 컴포넌트로 추출하여 계산 전 조기 반환을 활성화해요.
 
 **잘못된 예: 로딩 중에도 avatar 계산**
 
@@ -1004,13 +1004,13 @@ function Profile({ user, loading }: Props) {
 }
 ```
 
-**참고:** 프로젝트에 [React Compiler](https://react.dev/learn/react-compiler)가 활성화되어 있다면, `memo()`와 `useMemo()`를 사용한 수동 메모이제이션은 필요하지 않습니다. 컴파일러가 자동으로 리렌더를 최적화합니다.
+**참고:** 프로젝트에 [React Compiler](https://react.dev/learn/react-compiler)가 활성화되어 있다면, `memo()`와 `useMemo()`를 사용한 수동 메모이제이션은 필요하지 않아요. 컴파일러가 자동으로 리렌더를 최적화해요.
 
 ### 5.3 이펙트 의존성 좁히기
 
 **영향도: LOW (이펙트 재실행 최소화)**
 
-객체 대신 원시 값을 의존성으로 지정하여 이펙트 재실행을 최소화합니다.
+객체 대신 원시 값을 의존성으로 지정하여 이펙트 재실행을 최소화해요.
 
 **잘못된 예: user 필드 변경 시마다 재실행**
 
@@ -1051,7 +1051,7 @@ useEffect(() => {
 
 **영향도: MEDIUM (리렌더 빈도 감소)**
 
-리렌더 빈도를 줄이기 위해 연속적인 값 대신 파생된 boolean 상태를 구독합니다.
+리렌더 빈도를 줄이기 위해 연속적인 값 대신 파생된 boolean 상태를 구독해요.
 
 **잘못된 예: 픽셀 변경마다 리렌더**
 
@@ -1115,7 +1115,7 @@ function TodoList() {
 
 **영향도: MEDIUM (매 렌더마다 낭비되는 계산)**
 
-비싼 초기 값에는 `useState`에 함수를 전달합니다.
+비싼 초기 값에는 `useState`에 함수를 전달해요.
 
 **잘못된 예: 매 렌더마다 실행**
 
@@ -1133,7 +1133,7 @@ const [searchIndex, setSearchIndex] = useState(() => buildSearchIndex(items));
 
 **영향도: MEDIUM (UI 반응성 유지)**
 
-빈번하고 비긴급한 상태 업데이트를 transitions로 표시하여 UI 반응성을 유지합니다.
+빈번하고 비긴급한 상태 업데이트를 transitions로 표시하여 UI 반응성을 유지해요.
 
 **잘못된 예: 매 스크롤마다 UI 차단**
 
@@ -1171,13 +1171,13 @@ function ScrollTracker() {
 
 **영향도: MEDIUM**
 
-렌더링 프로세스를 최적화하면 브라우저가 해야 할 작업을 줄입니다.
+렌더링 프로세스를 최적화하면 브라우저가 해야 할 작업을 줄여요.
 
 ### 6.1 SVG 요소 대신 래퍼 애니메이션
 
 **영향도: LOW (하드웨어 가속 활성화)**
 
-많은 브라우저는 SVG 요소에 대한 CSS3 애니메이션의 하드웨어 가속을 지원하지 않습니다. SVG를 `<div>`로 감싸고 래퍼를 대신 애니메이션합니다.
+많은 브라우저는 SVG 요소에 대한 CSS3 애니메이션의 하드웨어 가속을 지원하지 않아요. SVG를 `<div>`로 감싸고 래퍼를 대신 애니메이션해요.
 
 **잘못된 예: SVG 직접 애니메이션 - 하드웨어 가속 없음**
 
@@ -1209,7 +1209,7 @@ function LoadingSpinner() {
 
 **영향도: HIGH (더 빠른 초기 렌더)**
 
-화면 밖 렌더링을 지연하기 위해 `content-visibility: auto`를 적용합니다.
+화면 밖 렌더링을 지연하기 위해 `content-visibility: auto`를 적용해요.
 
 ```css
 .message-item {
@@ -1218,13 +1218,13 @@ function LoadingSpinner() {
 }
 ```
 
-1000개 메시지의 경우, 브라우저가 화면 밖 ~990개 항목의 레이아웃/페인트를 건너뜁니다(10배 더 빠른 초기 렌더).
+1000개 메시지의 경우, 브라우저가 화면 밖 ~990개 항목의 레이아웃/페인트를 건너뛰어요(10배 더 빠른 초기 렌더).
 
 ### 6.3 정적 JSX 요소 호이스팅
 
 **영향도: LOW (재생성 방지)**
 
-재생성을 피하기 위해 정적 JSX를 컴포넌트 외부로 추출합니다.
+재생성을 피하기 위해 정적 JSX를 컴포넌트 외부로 추출해요.
 
 **잘못된 예: 매 렌더마다 요소 재생성**
 
@@ -1248,7 +1248,7 @@ function Container() {
 
 **영향도: LOW (파일 크기 감소)**
 
-파일 크기를 줄이기 위해 SVG 좌표 정밀도를 줄입니다.
+파일 크기를 줄이기 위해 SVG 좌표 정밀도를 줄여요.
 
 **잘못된 예: 과도한 정밀도**
 
@@ -1266,7 +1266,7 @@ function Container() {
 
 **영향도: MEDIUM (시각적 깜빡임 및 hydration 에러 방지)**
 
-클라이언트 사이드 스토리지(localStorage, cookies)에 의존하는 콘텐츠를 렌더링할 때, React가 hydrate하기 전에 DOM을 업데이트하는 동기 스크립트를 주입합니다.
+클라이언트 사이드 스토리지(localStorage, cookies)에 의존하는 콘텐츠를 렌더링할 때, React가 hydrate하기 전에 DOM을 업데이트하는 동기 스크립트를 주입해요.
 
 **잘못된 예: 시각적 깜빡임**
 
@@ -1285,13 +1285,13 @@ function ThemeWrapper({ children }: { children: ReactNode }) {
 
 **올바른 예: 인라인 스크립트로 즉시 적용**
 
-인라인 스크립트를 사용하여 요소를 표시하기 전에 DOM이 올바른 값을 갖도록 합니다. 이렇게 하면 깜빡임 없이, hydration 불일치 없이 테마가 적용됩니다.
+인라인 스크립트를 사용하여 요소를 표시하기 전에 DOM이 올바른 값을 갖도록 해요. 이렇게 하면 깜빡임 없이, hydration 불일치 없이 테마가 적용돼요.
 
 ### 6.6 Show/Hide에 Activity 컴포넌트 사용
 
 **영향도: MEDIUM (상태/DOM 보존)**
 
-자주 가시성이 토글되는 비싼 컴포넌트의 상태/DOM을 보존하기 위해 React의 `<Activity>`를 사용합니다.
+자주 가시성이 토글되는 비싼 컴포넌트의 상태/DOM을 보존하기 위해 React의 `<Activity>`를 사용해요.
 
 ```tsx
 import { Activity } from "react";
@@ -1309,7 +1309,7 @@ function Dropdown({ isOpen }: Props) {
 
 **영향도: LOW (0 또는 NaN 렌더링 방지)**
 
-조건이 `0`, `NaN` 또는 렌더링되는 다른 falsy 값일 수 있을 때 `&&` 대신 명시적 삼항 연산자를 사용합니다.
+조건이 `0`, `NaN` 또는 렌더링되는 다른 falsy 값일 수 있을 때 `&&` 대신 명시적 삼항 연산자를 사용해요.
 
 **잘못된 예: count가 0일 때 "0" 렌더링**
 
@@ -1333,19 +1333,19 @@ function Dropdown({ isOpen }: Props) {
 
 **영향도: LOW-MEDIUM**
 
-핫 패스에 대한 마이크로 최적화가 쌓이면 의미 있는 개선이 될 수 있습니다.
+핫 패스에 대한 마이크로 최적화가 쌓이면 의미 있는 개선이 될 수 있어요.
 
 ### 7.1 DOM CSS 변경 일괄 처리
 
 **영향도: MEDIUM (리플로우/리페인트 감소)**
 
-스타일을 한 번에 하나씩 변경하지 말고 클래스나 `cssText`를 통해 여러 CSS 변경을 함께 그룹화합니다.
+스타일을 한 번에 하나씩 변경하지 말고 클래스나 `cssText`를 통해 여러 CSS 변경을 함께 그룹화해요.
 
 ### 7.2 반복 조회를 위한 인덱스 Map 빌드
 
 **영향도: LOW-MEDIUM (1M 작업을 2K 작업으로)**
 
-같은 키로 여러 번 `.find()`를 호출하면 Map을 사용해야 합니다.
+같은 키로 여러 번 `.find()`를 호출하면 Map을 사용해야 해요.
 
 **잘못된 예 (조회당 O(n)):**
 
@@ -1362,41 +1362,41 @@ const user = userById.get(order.userId);
 
 ### 7.3 루프에서 속성 접근 캐싱
 
-핫 패스에서 객체 속성 조회를 캐싱합니다.
+핫 패스에서 객체 속성 조회를 캐싱해요.
 
 ### 7.4 반복 함수 호출 캐싱
 
-렌더 중에 같은 입력으로 같은 함수가 반복적으로 호출될 때 모듈 레벨 Map을 사용하여 함수 결과를 캐싱합니다.
+렌더 중에 같은 입력으로 같은 함수가 반복적으로 호출될 때 모듈 레벨 Map을 사용하여 함수 결과를 캐싱해요.
 
 ### 7.5 Storage API 호출 캐싱
 
-`localStorage`, `sessionStorage`, `document.cookie`는 동기적이고 비쌉니다. 메모리에 읽기를 캐싱합니다.
+`localStorage`, `sessionStorage`, `document.cookie`는 동기적이고 비싸요. 메모리에 읽기를 캐싱해요.
 
 ### 7.6 여러 배열 반복 결합
 
-여러 `.filter()` 또는 `.map()` 호출은 배열을 여러 번 반복합니다. 하나의 루프로 결합합니다.
+여러 `.filter()` 또는 `.map()` 호출은 배열을 여러 번 반복해요. 하나의 루프로 결합해요.
 
 ### 7.7 배열 비교에서 길이 먼저 확인
 
-비싼 작업으로 배열을 비교할 때 먼저 길이를 확인합니다. 길이가 다르면 배열은 같을 수 없습니다.
+비싼 작업으로 배열을 비교할 때 먼저 길이를 확인해요. 길이가 다르면 배열은 같을 수 없어요.
 
 ### 7.8 함수에서 조기 반환
 
-결과가 결정되면 조기에 반환하여 불필요한 처리를 건너뜁니다.
+결과가 결정되면 조기에 반환하여 불필요한 처리를 건너뛰어요.
 
 ### 7.9 RegExp 생성 호이스팅
 
-렌더 내부에서 RegExp를 생성하지 마세요. 모듈 스코프로 호이스팅하거나 `useMemo()`로 메모이즈합니다.
+렌더 내부에서 RegExp를 생성하지 마세요. 모듈 스코프로 호이스팅하거나 `useMemo()`로 메모이즈해요.
 
 ### 7.10 Sort 대신 루프로 Min/Max 찾기
 
 **영향도: LOW (O(n log n) 대신 O(n))**
 
-가장 작거나 큰 요소를 찾는 데는 배열을 한 번 통과하면 됩니다. 정렬은 낭비이고 더 느립니다.
+가장 작거나 큰 요소를 찾는 데는 배열을 한 번 통과하면 돼요. 정렬은 낭비이고 더 느려요.
 
 ### 7.11 O(1) 조회를 위한 Set/Map 사용
 
-반복되는 멤버십 확인을 위해 배열을 Set/Map으로 변환합니다.
+반복되는 멤버십 확인을 위해 배열을 Set/Map으로 변환해요.
 
 **잘못된 예 (확인당 O(n)):**
 
@@ -1414,7 +1414,7 @@ allowedIds.has(item.id);
 
 **영향도: MEDIUM-HIGH (React 상태에서 변경 버그 방지)**
 
-`.sort()`는 배열을 제자리에서 변경합니다. `.toSorted()`를 사용하여 변경 없이 새로운 정렬된 배열을 만듭니다.
+`.sort()`는 배열을 제자리에서 변경해요. `.toSorted()`를 사용하여 변경 없이 새로운 정렬된 배열을 만들어요.
 
 **잘못된 예: 원본 배열 변경**
 
@@ -1434,19 +1434,19 @@ const sorted = users.toSorted((a, b) => a.name.localeCompare(b.name));
 
 **영향도: LOW**
 
-주의 깊은 구현이 필요한 특정 케이스를 위한 고급 패턴.
+주의 깊은 구현이 필요한 특정 케이스를 위한 고급 패턴이에요.
 
 ### 8.1 Refs에 이벤트 핸들러 저장
 
 **영향도: LOW (안정적인 구독)**
 
-콜백 변경 시 재구독하지 않아야 하는 이펙트에서 사용되는 콜백을 refs에 저장합니다. `useEffectEvent`를 사용하면 더 깔끔한 API를 제공합니다.
+콜백 변경 시 재구독하지 않아야 하는 이펙트에서 사용되는 콜백을 refs에 저장해요. `useEffectEvent`를 사용하면 더 깔끔한 API를 제공해요.
 
 ### 8.2 안정적인 콜백 Refs를 위한 useLatest
 
 **영향도: LOW (이펙트 재실행 방지)**
 
-의존성 배열에 추가하지 않고 콜백에서 최신 값에 접근합니다.
+의존성 배열에 추가하지 않고 콜백에서 최신 값에 접근해요.
 
 **구현:**
 

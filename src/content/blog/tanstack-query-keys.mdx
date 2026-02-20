@@ -7,13 +7,13 @@ tags: ["react", "tanstack-query", "typescript", "react-query"]
 draft: false
 ---
 
-TanStack Query(구 React Query)를 사용하면서 처음에는 Query Key를 대충 `['todos']` 같이 쓰다가, 프로젝트가 커지면서 "이 키가 뭐였더라?" 하는 순간이 옵니다.
+TanStack Query(구 React Query)를 사용하면서 처음에는 Query Key를 대충 `['todos']` 같이 쓰다가, 프로젝트가 커지면서 "이 키가 뭐였더라?" 하는 순간이 와요.
 
-이 문제를 해결하는 **Query Key Factory 패턴**을 단계별로 알아봅니다. 이 글을 읽으면 오타 걱정 없이 타입 안전한 Query Key를 설계하고, `queryOptions()`로 키와 함수를 하나로 묶어 유지보수성을 높일 수 있습니다. TanStack Query 메인테이너인 TkDodo(Dominik Dorfmeister)가 제안한 이 패턴은 커뮤니티에서 사실상 표준으로 자리잡았습니다.
+이 문제를 해결하는 **Query Key Factory 패턴**을 단계별로 알아봐요. 이 글을 읽으면 오타 걱정 없이 타입 안전한 Query Key를 설계하고, `queryOptions()`로 키와 함수를 하나로 묶어 유지보수성을 높일 수 있어요. TanStack Query 메인테이너인 TkDodo(Dominik Dorfmeister)가 제안한 이 패턴은 커뮤니티에서 사실상 표준으로 자리잡았어요.
 
 ## 문자열 Query Key의 문제점
 
-프로젝트가 커지면 같은 Query Key를 여러 파일에서 반복 사용하게 됩니다.
+프로젝트가 커지면 같은 Query Key를 여러 파일에서 반복 사용하게 돼요.
 
 ```typescript
 // TodoList.tsx
@@ -32,25 +32,25 @@ queryClient.invalidateQueries({ queryKey: ["todos"] });
 queryClient.prefetchQuery({ queryKey: ["todos", "detail", id], queryFn: () => fetchTodo(id) });
 ```
 
-이런 코드가 파일 10개, 20개로 퍼지면 세 가지 문제가 나타납니다.
+이런 코드가 파일 10개, 20개로 퍼지면 세 가지 문제가 나타나요.
 
-1. **오타를 잡을 수 없습니다** - `'todos'`를 `'todo'`로 쓰면 캐시가 분리되는데, TypeScript는 둘 다 유효한 문자열이라 에러를 내지 않습니다
-2. **구조 변경이 어렵습니다** - 키 구조를 바꾸고 싶으면 모든 파일을 찾아다니며 수정해야 합니다
-3. **기억에 의존합니다** - "목록 키가 `['todos', 'list']`였나 `['todos', 'lists']`였나?" 점점 헷갈립니다
+1. **오타를 잡을 수 없어요** - `'todos'`를 `'todo'`로 쓰면 캐시가 분리되는데, TypeScript는 둘 다 유효한 문자열이라 에러를 내지 않아요
+2. **구조 변경이 어려워요** - 키 구조를 바꾸고 싶으면 모든 파일을 찾아다니며 수정해야 해요
+3. **기억에 의존해요** - "목록 키가 `['todos', 'list']`였나 `['todos', 'lists']`였나?" 점점 헷갈려요
 
 ## 배경 지식: Query Key가 하는 일
 
-Factory 패턴을 이해하려면 먼저 Query Key가 TanStack Query에서 어떤 역할을 하는지 알아야 합니다.
+Factory 패턴을 이해하려면 먼저 Query Key가 TanStack Query에서 어떤 역할을 하는지 알아야 해요.
 
 ### Query Key의 세 가지 역할
 
-1. **캐싱** - 내부적으로 Query Cache는 Query Key를 직렬화(serialize)한 문자열 키를 기반으로 데이터를 관리합니다
-2. **자동 리페칭** - Query Key가 변경되면 자동으로 새 데이터를 가져옵니다
-3. **수동 캐시 조작** - `invalidateQueries`, `setQueryData` 등으로 캐시를 직접 제어할 때 사용합니다
+1. **캐싱** - 내부적으로 Query Cache는 Query Key를 직렬화(serialize)한 문자열 키를 기반으로 데이터를 관리해요
+2. **자동 리페칭** - Query Key가 변경되면 자동으로 새 데이터를 가져와요
+3. **수동 캐시 조작** - `invalidateQueries`, `setQueryData` 등으로 캐시를 직접 제어할 때 사용해요
 
 ### "일반적 → 구체적" 구조
 
-Query Key를 설계할 때 가장 중요한 원칙은 **넓은 범위에서 좁은 범위 순서로** 구성하는 것입니다.
+Query Key를 설계할 때 가장 중요한 원칙은 **넓은 범위에서 좁은 범위 순서로** 구성하는 거예요.
 
 ```
 ['todos', 'list', { filters: 'all' }]   // 전체 목록
@@ -59,7 +59,7 @@ Query Key를 설계할 때 가장 중요한 원칙은 **넓은 범위에서 좁�
 ['todos', 'detail', 2]                   // 2번 할일 상세
 ```
 
-이렇게 하면 `invalidateQueries`의 **접두사 매칭(prefix matching)**을 활용할 수 있습니다.
+이렇게 하면 `invalidateQueries`의 **접두사 매칭(prefix matching)**을 활용할 수 있어요.
 
 ```typescript
 // ['todos']로 시작하는 모든 쿼리 무효화
@@ -69,11 +69,11 @@ queryClient.invalidateQueries({ queryKey: ["todos"] });
 queryClient.invalidateQueries({ queryKey: ["todos", "list"] });
 ```
 
-`['todos']`를 전달하면 `['todos']`로 **시작하는** 모든 쿼리가 매칭되는 겁니다. 이 원칙을 이해해야 Factory 패턴이 왜 저런 구조인지 납득이 됩니다.
+`['todos']`를 전달하면 `['todos']`로 **시작하는** 모든 쿼리가 매칭되는 거예요. 이 원칙을 이해해야 Factory 패턴이 왜 저런 구조인지 납득이 돼요.
 
 ## Query Key Factory 패턴
 
-핵심 아이디어는 단순합니다. **Query Key를 직접 문자열로 쓰지 말고, 키를 생성해주는 함수들의 모음 객체를 만들자.**
+핵심 아이디어는 단순해요. **Query Key를 직접 문자열로 쓰지 말고, 키를 생성해주는 함수들의 모음 객체를 만들자.**
 
 ```typescript
 const todoKeys = {
@@ -85,7 +85,7 @@ const todoKeys = {
 };
 ```
 
-이게 전부입니다. 객체 하나에 키 생성 함수들을 모아놓은 것입니다.
+이게 전부예요. 객체 하나에 키 생성 함수들을 모아놓은 거예요.
 
 ### 각 항목이 만들어내는 키
 
@@ -97,7 +97,7 @@ todoKeys.details(); // ['todos', 'detail']
 todoKeys.detail(1); // ['todos', 'detail', 1]
 ```
 
-계층 구조로 보면 이렇습니다.
+계층 구조로 보면 이래요.
 
 ```mermaid
 flowchart TD
@@ -109,11 +109,11 @@ flowchart TD
     C --> G["todoKeys.detail( 2 )<br/>( todos, detail, 2 )"]
 ```
 
-각 함수가 **상위 키를 spread**하면서 만들어지기 때문에, "일반적 → 구체적" 구조가 자동으로 보장됩니다.
+각 함수가 **상위 키를 spread**하면서 만들어지기 때문에, "일반적 → 구체적" 구조가 자동으로 보장돼요.
 
 ### 적용하면 어떻게 바뀌는지
 
-아까 문자열로 흩어져 있던 코드가 이렇게 바뀝니다.
+아까 문자열로 흩어져 있던 코드가 이렇게 바뀌어요.
 
 ```typescript
 // TodoList.tsx
@@ -141,13 +141,13 @@ queryClient.prefetchQuery({
 });
 ```
 
-- **오타?** `todoKeys.detial`이면 TypeScript가 바로 에러를 냅니다.
-- **구조 변경?** `todoKeys` 객체 하나만 수정하면 끝입니다.
-- **기억 의존?** IDE 자동완성이 모든 옵션을 보여줍니다.
+- **오타?** `todoKeys.detial`이면 TypeScript가 바로 에러를 내요.
+- **구조 변경?** `todoKeys` 객체 하나만 수정하면 끝이에요.
+- **기억 의존?** IDE 자동완성이 모든 옵션을 보여줘요.
 
 ### as const가 필요한 이유
 
-Factory 코드에서 `as const`가 빠지면 어떻게 되는지 살펴보겠습니다.
+Factory 코드에서 `as const`가 빠지면 어떻게 되는지 살펴봐요.
 
 ```typescript
 // as const 없이
@@ -163,11 +163,11 @@ const keys = {
 };
 ```
 
-`as const` 없이는 TypeScript가 `string[]`으로 넓게 추론합니다. 그러면 `['todos']`와 `['users']`가 같은 타입이 되어버려서, 잘못된 키를 전달해도 에러가 나지 않습니다. `as const`를 사용하면 **정확한 튜플 타입**이 되어 키 간의 구분이 타입 레벨에서 보장됩니다.
+`as const` 없이는 TypeScript가 `string[]`으로 넓게 추론해요. 그러면 `['todos']`와 `['users']`가 같은 타입이 되어버려서, 잘못된 키를 전달해도 에러가 나지 않아요. `as const`를 사용하면 **정확한 튜플 타입**이 되어 키 간의 구분이 타입 레벨에서 보장돼요.
 
 ## queryOptions()와의 결합
 
-여기까지만 해도 충분히 유용하지만, 한 가지 아쉬운 점이 있습니다. **Query Key와 Query Function이 여전히 따로 놀고 있다는 것**입니다.
+여기까지만 해도 충분히 유용하지만, 한 가지 아쉬운 점이 있어요. **Query Key와 Query Function이 여전히 따로 놀고 있다는 것**이에요.
 
 ```typescript
 // 키는 todoKeys에 있고
@@ -176,11 +176,11 @@ queryKey: todoKeys.list(filters),
 queryFn: () => fetchTodos(filters),
 ```
 
-`filters`가 키에도, 함수에도 쓰이는데 둘이 따로 관리되면 실수할 여지가 있습니다. TanStack Query v5에서 도입된 `queryOptions()`를 사용하면 이 문제를 해결할 수 있습니다.
+`filters`가 키에도, 함수에도 쓰이는데 둘이 따로 관리되면 실수할 여지가 있어요. TanStack Query v5에서 도입된 `queryOptions()`를 사용하면 이 문제를 해결할 수 있어요.
 
 ### queryOptions()가 하는 일
 
-런타임에서 `queryOptions()`는 놀랍게도 **아무것도 하지 않습니다**.
+런타임에서 `queryOptions()`는 놀랍게도 **아무것도 하지 않아요**.
 
 ```typescript
 // 실제 소스 코드 (진짜 이게 끝입니다)
@@ -189,7 +189,7 @@ export function queryOptions(options) {
 }
 ```
 
-`queryOptions()`가 필요한 이유는 **TypeScript 타입 안전성** 때문입니다.
+`queryOptions()`가 필요한 이유는 **TypeScript 타입 안전성** 때문이에요.
 
 ### 문제: 객체를 변수로 빼면 오타를 못 잡는다
 
@@ -207,14 +207,14 @@ useQuery({
 const todosConfig = {
   queryKey: ["todos"],
   queryFn: fetchTodos,
-  stallTime: 5000, // ⚠️ 에러가 안 납니다!
+  stallTime: 5000, // ⚠️ 에러가 안 나요!
 };
 useQuery(todosConfig); // stallTime은 무시되고 기본값이 적용됨
 ```
 
-이것은 TypeScript의 **초과 속성 검사(Excess Property Checking)** 가 object literal에만 적용되기 때문입니다. `useQuery({ ... })`처럼 직접 넘기면 "이 객체는 여기서만 쓰인다"고 판단해 불필요한 속성을 잡아주지만, 변수에 담으면 "다른 곳에서도 쓸 수 있는 객체"로 보고 필요한 속성만 확인합니다.
+이것은 TypeScript의 **초과 속성 검사(Excess Property Checking)** 가 object literal에만 적용되기 때문이에요. `useQuery({ ... })`처럼 직접 넘기면 "이 객체는 여기서만 쓰인다"고 판단해 불필요한 속성을 잡아주지만, 변수에 담으면 "다른 곳에서도 쓸 수 있는 객체"로 보고 필요한 속성만 확인해요.
 
-`queryOptions()`로 감싸면 해결됩니다.
+`queryOptions()`로 감싸면 해결돼요.
 
 ```typescript
 import { queryOptions } from "@tanstack/react-query";
@@ -226,11 +226,11 @@ const todosConfig = queryOptions({
 });
 ```
 
-`queryOptions()`의 타입 시그니처가 "이 객체는 Query 설정이다"라고 TypeScript에게 알려주기 때문에, 잘못된 속성을 넣으면 바로 에러가 발생합니다.
+`queryOptions()`의 타입 시그니처가 "이 객체는 Query 설정이다"라고 TypeScript에게 알려주기 때문에, 잘못된 속성을 넣으면 바로 에러가 발생해요.
 
 ### DataTag: 자동 타입 추론
 
-`queryOptions()`의 가장 강력한 기능은 **DataTag**입니다. Query Key에 Query Function의 반환 타입 정보를 자동으로 연결해줍니다.
+`queryOptions()`의 가장 강력한 기능은 **DataTag**예요. Query Key에 Query Function의 반환 타입 정보를 자동으로 연결해줘요.
 
 ```typescript
 // queryOptions 없이 → 타입을 수동으로 지정해야 함
@@ -254,11 +254,11 @@ queryClient.setQueryData(todosQuery.queryKey, (old) => {
 });
 ```
 
-`queryOptions()`가 내부적으로 `queryKey`에 DataTag라는 타입 메타데이터를 심어놓기 때문에, 그 키를 `getQueryData`나 `setQueryData`에 넘기면 **queryFn의 반환 타입이 자동으로 연결**됩니다.
+`queryOptions()`가 내부적으로 `queryKey`에 DataTag라는 타입 메타데이터를 심어놓기 때문에, 그 키를 `getQueryData`나 `setQueryData`에 넘기면 **queryFn의 반환 타입이 자동으로 연결**돼요.
 
 ### 최종 진화형: Key Factory + queryOptions()
 
-이제 두 패턴을 결합하면 최종형이 완성됩니다. 앞서 `all`은 값이었지만, queryOptions와 결합할 때는 **모든 항목을 함수로 통일**하면 API가 일관됩니다.
+이제 두 패턴을 결합하면 최종형이 완성돼요. 앞서 `all`은 값이었지만, queryOptions와 결합할 때는 **모든 항목을 함수로 통일**하면 API가 일관돼요.
 
 ```typescript
 import { queryOptions } from "@tanstack/react-query";
@@ -286,7 +286,7 @@ const todoQueries = {
 };
 ```
 
-핵심은 **두 가지 레벨을 혼합**한다는 점입니다.
+핵심은 **두 가지 레벨을 혼합**한다는 점이에요.
 
 - `all()`, `lists()`, `details()` → **키 배열만 반환** (invalidation, removeQueries에 사용)
 - `list()`, `detail()` → **queryOptions 객체 반환** (useQuery, prefetchQuery에 사용)
@@ -319,7 +319,7 @@ function TodoDetail({ id }: { id: number }) {
 
 ### Mutation 후 캐시 업데이트
 
-Mutation이 성공하면 관련 캐시를 업데이트해야 합니다. 모든 걸 invalidation으로 처리할 수도 있지만, 직접 업데이트와 invalidation을 혼합하면 더 효율적입니다.
+Mutation이 성공하면 관련 캐시를 업데이트해야 해요. 모든 걸 invalidation으로 처리할 수도 있지만, 직접 업데이트와 invalidation을 혼합하면 더 효율적이에요.
 
 ```mermaid
 flowchart LR
@@ -358,7 +358,7 @@ function useUpdateTodo() {
 }
 ```
 
-현재 보고 있는 상세와 목록은 **직접 업데이트**로 즉시 반영하고, 보고 있지 않은 다른 목록들은 `refetchType: 'none'`으로 **stale 마킹만** 해둡니다. 나중에 해당 목록을 열면 그때 새로 가져옵니다. 불필요한 네트워크 요청을 줄이는 스마트한 패턴입니다.
+현재 보고 있는 상세와 목록은 **직접 업데이트**로 즉시 반영하고, 보고 있지 않은 다른 목록들은 `refetchType: 'none'`으로 **stale 마킹만** 해둬요. 나중에 해당 목록을 열면 그때 새로 가져와요. 불필요한 네트워크 요청을 줄이는 스마트한 패턴이에요.
 
 ### 페이지 프리페칭
 
@@ -370,7 +370,7 @@ async function todoDetailLoader({ params }) {
 }
 ```
 
-`todoQueries.detail(id)`가 `queryKey`와 `queryFn`을 모두 포함하고 있기 때문에, `ensureQueryData`에 그대로 전달하면 됩니다. 키와 함수를 따로 전달할 필요가 없습니다.
+`todoQueries.detail(id)`가 `queryKey`와 `queryFn`을 모두 포함하고 있기 때문에, `ensureQueryData`에 그대로 전달하면 돼요. 키와 함수를 따로 전달할 필요가 없어요.
 
 ### 프로젝트 디렉토리 구조
 
@@ -388,11 +388,11 @@ src/
 │       └── useUpdateUser.ts
 ```
 
-각 기능(feature) 디렉토리에 `queries.ts`를 두고, 해당 기능의 **팩토리 객체와 API 함수를 함께 관리**합니다. 컴포넌트에서는 이 파일만 import하면 됩니다.
+각 기능(feature) 디렉토리에 `queries.ts`를 두고, 해당 기능의 **팩토리 객체와 API 함수를 함께 관리**해요. 컴포넌트에서는 이 파일만 import하면 돼요.
 
 ## 대안: @lukemorales/query-key-factory
 
-직접 팩토리 객체를 만드는 것이 번거롭다면, [@lukemorales/query-key-factory](https://github.com/lukemorales/query-key-factory) 라이브러리를 사용할 수도 있습니다.
+직접 팩토리 객체를 만드는 것이 번거롭다면, [@lukemorales/query-key-factory](https://github.com/lukemorales/query-key-factory) 라이브러리를 사용할 수도 있어요.
 
 ```bash
 pnpm add @lukemorales/query-key-factory
@@ -423,7 +423,7 @@ const userKeys = createQueryKeys("users", {
 const queryKeys = mergeQueryKeys(todoKeys, userKeys);
 ```
 
-`createQueryKeys`가 자동으로 prefix를 추가하고, TypeScript 자동완성을 제공합니다. 다만 TanStack Query v5의 `queryOptions()`가 이미 충분히 강력하기 때문에, 라이브러리 없이 직접 만드는 것도 좋은 선택입니다.
+`createQueryKeys`가 자동으로 prefix를 추가하고, TypeScript 자동완성을 제공해요. 다만 TanStack Query v5의 `queryOptions()`가 이미 충분히 강력하기 때문에, 라이브러리 없이 직접 만드는 것도 좋은 선택이에요.
 
 ## 단계별 정리
 
@@ -435,12 +435,12 @@ const queryKeys = mergeQueryKeys(todoKeys, userKeys);
 
 ## 마무리하며
 
-Query Key Factory 패턴은 TanStack Query 메인테이너인 [TkDodo의 블로그](https://tkdodo.eu/blog/effective-react-query-keys)에서 시작된 커뮤니티 컨벤션이지만, v5에서 `queryOptions()`라는 공식 API와 결합하면서 사실상 표준 패턴이 되었습니다.
+Query Key Factory 패턴은 TanStack Query 메인테이너인 [TkDodo의 블로그](https://tkdodo.eu/blog/effective-react-query-keys)에서 시작된 커뮤니티 컨벤션이지만, v5에서 `queryOptions()`라는 공식 API와 결합하면서 사실상 표준 패턴이 됐어요.
 
-핵심은 두 가지입니다.
+핵심은 두 가지예요.
 
-1. **Query Key를 "일반적 → 구체적" 계층 구조로 설계**하면 invalidation이 유연해집니다
-2. **queryOptions()로 Key와 Function을 함께 묶으면** 타입 안전성과 유지보수성을 모두 잡을 수 있습니다
+1. **Query Key를 "일반적 → 구체적" 계층 구조로 설계**하면 invalidation이 유연해져요
+2. **queryOptions()로 Key와 Function을 함께 묶으면** 타입 안전성과 유지보수성을 모두 잡을 수 있어요
 
 ### 참고 자료
 

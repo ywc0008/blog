@@ -274,7 +274,15 @@ These values are public and safe to commit. Comments are displayed via GitHub Di
 
 ## Blog Post Writing Guide (개발자 글쓰기 가이드)
 
-블로그 포스트(MDX) 작성 시 아래 원칙을 따른다. (출처: [technical-writing.dev](https://technical-writing.dev))
+블로그 포스트(MDX) 작성 시 아래 원칙을 따른다.
+
+### 문체 규칙
+
+- **해요체** 사용 (합니다체 금지): "~합니다" → "~해요", "~됩니다" → "~돼요", "~입니다" → "~이에요/예요"
+- 코드 블록 내 주석은 문체 변환 대상이 아님
+- 기존 포스트 참고: `nextjs-jwt-proxy-pattern.mdx`, `tanstack-query-keys.mdx`
+
+(출처: [technical-writing.dev](https://technical-writing.dev))
 
 ### Step 1. 문서 유형 파악
 
