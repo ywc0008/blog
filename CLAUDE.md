@@ -106,6 +106,8 @@ draft: boolean
 - Posts: `/posts/[slug]`
 - Categories: `/categories/[category]` (lowercase)
 - Tags: `/tags/[tag]` (lowercase)
+- OG Images: `/og/[slug].png` (빌드 타임 자동 생성)
+- Default OG: `/og/default.png` (홈/카테고리/태그 페이지용)
 - RSS: `/rss.xml`
 - LLMs.txt: `/llms.txt` (AI 크롤러용 사이트 요약)
 - LLMs-full.txt: `/llms-full.txt` (AI 크롤러용 상세 콘텐츠 가이드)
@@ -119,6 +121,16 @@ draft: boolean
 - `post.slug` is URL-safe without extension (e.g., "luxon")
 - Bad: `params: { slug: post.id }` → `/posts/Luxon.mdx/`
 - Good: `params: { slug: post.slug }` → `/posts/luxon/`
+
+### OG Image Auto-Generation
+
+- **Stack**: satori (JSX → SVG) + sharp (SVG → PNG), 빌드 타임 생성
+- **Endpoints**: `src/pages/og/[slug].png.ts` (포스트별), `src/pages/og/default.png.ts` (사이트 기본)
+- **Template**: `src/utils/og-template.ts` — satori용 JSX-like 객체 (`{ type, props }` 구조, React 런타임 불필요)
+- **Fonts**: `src/assets/fonts/PretendardBold.otf`, `PretendardRegular.otf` (빌드 전용, 클라이언트 전송 안 됨)
+- **Design**: 1200x630px, 상단 파란 그라데이션 바 + 카테고리 뱃지 + 제목 + 푸터(ywc.life + 날짜)
+- **Integration**: `[slug].astro`에서 `image={/og/${post.slug}.png}`, `SEO.astro`에서 fallback `/og/default.png`
+- **Output**: `dist/og/luxon.png`, `dist/og/msw.png` 등 각 포스트별 PNG 파일
 
 ### Image Optimization
 
@@ -145,6 +157,9 @@ draft: boolean
 - `src/components/astro/TOC.astro`: Table of contents with Intersection Observer for current section highlighting
 - `src/components/astro/Mermaid.astro`: Mermaid 다이어그램 lazy loader (CDN에서 mermaid@11 로드, is:inline script)
 - `src/utils/post.ts`: 유틸리티 함수 (sortPostsByDate, calculateReadingTime, getPostsByCategory, getPostsByTag, getAllTags)
+- `src/utils/og-template.ts`: OG 이미지 satori 템플릿 (generateOgTemplate, generateDefaultOgTemplate)
+- `src/pages/og/[slug].png.ts`: 포스트별 OG 이미지 빌드 타임 생성 엔드포인트
+- `src/pages/og/default.png.ts`: 사이트 기본 OG 이미지 엔드포인트
 - `src/pages/posts/[slug].astro`: Post detail page with hero image display and TOC sidebar
 - `src/pages/llms.txt.ts`: AI 크롤러용 사이트 요약 엔드포인트 (빌드 타임 생성)
 - `src/pages/llms-full.txt.ts`: AI 크롤러용 상세 콘텐츠 가이드 (빌드 타임 생성)
@@ -279,6 +294,7 @@ These values are public and safe to commit. Comments are displayed via GitHub Di
 ### 문체 규칙
 
 - **해요체** 사용 (합니다체 금지): "~합니다" → "~해요", "~됩니다" → "~돼요", "~입니다" → "~이에요/예요"
+- **메타 담화 최소화**: '앞서 설명했듯이', '다음으로', '이번 글에서는', '그 전에', '사실은', '아시겠지만' 등 본문 흐름과 무관한 접속 표현을 쓰지 않는다. 제목과 코드가 이미 맥락을 전달하므로 불필요한 전환 문구를 넣지 않는다.
 - 코드 블록 내 주석은 문체 변환 대상이 아님
 - 기존 포스트 참고: `nextjs-jwt-proxy-pattern.mdx`, `tanstack-query-keys.mdx`
 
