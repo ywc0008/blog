@@ -44,7 +44,7 @@ Factory 패턴을 이해하려면 먼저 Query Key가 TanStack Query에서 어�
 
 ### Query Key의 세 가지 역할
 
-1. **캐싱** - 내부적으로 Query Cache는 Query Key를 직렬화(serialize)한 문자열 키를 기반으로 데이터를 관리해요
+1. **캐싱** - 내부적으로 Query Cache는 Query Key를 직렬화(serialize)한 문자열 키로 데이터를 관리해요
 2. **자동 리페칭** - Query Key가 변경되면 자동으로 새 데이터를 가져와요
 3. **수동 캐시 조작** - `invalidateQueries`, `setQueryData` 등으로 캐시를 직접 제어할 때 사용해요
 
@@ -73,7 +73,7 @@ queryClient.invalidateQueries({ queryKey: ["todos", "list"] });
 
 ## Query Key Factory 패턴
 
-핵심 아이디어는 단순해요. **Query Key를 직접 문자열로 쓰지 말고, 키를 생성해주는 함수들의 모음 객체를 만들자.**
+핵심 아이디어는 단순해요. Query Key를 직접 문자열로 쓰지 말고, **키 생성 함수 모음 객체**를 만들자.
 
 ```typescript
 const todoKeys = {
@@ -85,7 +85,7 @@ const todoKeys = {
 };
 ```
 
-이게 전부예요. 객체 하나에 키 생성 함수들을 모아놓은 거예요.
+객체 하나에 키 생성 함수들을 모아놓은 거예요.
 
 ### 각 항목이 만들어내는 키
 
@@ -97,7 +97,7 @@ todoKeys.details(); // ['todos', 'detail']
 todoKeys.detail(1); // ['todos', 'detail', 1]
 ```
 
-계층 구조로 보면 이래요.
+계층 구조는 다음과 같아요.
 
 ```mermaid
 flowchart TD
@@ -145,6 +145,12 @@ queryClient.prefetchQuery({
 - **구조 변경?** `todoKeys` 객체 하나만 수정하면 끝이에요.
 - **기억 의존?** IDE 자동완성이 모든 옵션을 보여줘요.
 
+| 문제      | 문자열 방식               | Factory 방식                        |
+| --------- | ------------------------- | ----------------------------------- |
+| 오타      | `'detial'` 써도 에러 없음 | `todoKeys.detial` → TypeScript 에러 |
+| 구조 변경 | 모든 파일에서 수동 수정   | `todoKeys` 객체 하나만 수정         |
+| 기억 의존 | "list였나 lists였나?"     | IDE 자동완성으로 선택               |
+
 ### as const가 필요한 이유
 
 Factory 코드에서 `as const`가 빠지면 어떻게 되는지 살펴봐요.
@@ -167,7 +173,7 @@ const keys = {
 
 ## queryOptions()와의 결합
 
-여기까지만 해도 충분히 유용하지만, 한 가지 아쉬운 점이 있어요. **Query Key와 Query Function이 여전히 따로 놀고 있다는 것**이에요.
+여기까지만 해도 충분히 유용하지만, 한 가지 아쉬운 점이 있어요. Query Key와 Query Function이 **여전히 분리**되어 있다는 것이에요.
 
 ```typescript
 // 키는 todoKeys에 있고
@@ -180,7 +186,7 @@ queryFn: () => fetchTodos(filters),
 
 ### queryOptions()가 하는 일
 
-런타임에서 `queryOptions()`는 놀랍게도 **아무것도 하지 않아요**.
+런타임에서 `queryOptions()`는 **아무것도 하지 않아요**.
 
 ```typescript
 // 실제 소스 코드 (진짜 이게 끝입니다)
