@@ -1,0 +1,260 @@
+---
+import { getCollection } from "astro:content";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import Header from "../../components/astro/Header.astro";
+import Footer from "../../components/astro/Footer.astro";
+
+const allPosts = await getCollection("blog");
+const publishedPosts = allPosts.filter((post) => !post.data.draft);
+
+const tagMap = new Map<string, number>();
+publishedPosts.forEach((post) => {
+  post.data.tags.forEach((tag) => {
+    tagMap.set(tag, (tagMap.get(tag) || 0) + 1);
+  });
+});
+
+const tags = Array.from(tagMap.entries())
+  .map(([name, count]) => ({ name, count }))
+  .sort((a, b) => b.count - a.count);
+
+const maxCount = Math.max(...tags.map((t) => t.count), 1);
+
+const MIN_SIZE = 80;
+const MAX_SIZE = 160;
+
+const palette = [
+  { bg: "#dbeafe", text: "#1d4ed8", border: "#bfdbfe" },
+  { bg: "#d1fae5", text: "#047857", border: "#a7f3d0" },
+  { bg: "#ede9fe", text: "#6d28d9", border: "#ddd6fe" },
+  { bg: "#fef3c7", text: "#b45309", border: "#fde68a" },
+  { bg: "#ffe4e6", text: "#be123c", border: "#fecdd3" },
+  { bg: "#cffafe", text: "#0e7490", border: "#a5f3fc" },
+  { bg: "#fce7f3", text: "#be185d", border: "#fbcfe8" },
+  { bg: "#ccfbf1", text: "#0f766e", border: "#99f6e4" },
+];
+
+const siteTitle = "Tags - ywc.life";
+const siteDescription = "태그별로 포스트를 탐색해 보세요.";
+---
+
+<BaseLayout title={siteTitle} description={siteDescription}>
+  <div class="min-h-screen flex flex-col">
+    <Header />
+
+    <main class="flex-1">
+      <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <section class="text-center mb-8">
+          <h1 class="text-4xl sm:text-5xl font-bold mb-4 text-gray-900">Tags</h1>
+          <p class="text-xl text-gray-600 max-w-2xl mx-auto">
+            태그를 클릭하면 관련 포스트를 볼 수 있어요.
+          </p>
+        </section>
+
+        <section
+          id="bubble-container"
+          class="relative mx-auto overflow-hidden h-[350px] sm:h-[450px] md:h-[500px]"
+          style="max-width: 800px;"
+        >
+          {
+            tags.map((tag, i) => {
+              const ratio = tag.count / maxCount;
+              const size = Math.round(MIN_SIZE + ratio * (MAX_SIZE - MIN_SIZE));
+              const innerWidth = size * 0.65;
+              const charWidth = 0.6;
+              const fitFont = innerWidth / (tag.name.length * charWidth);
+              const fontSize = Math.round(Math.max(10, Math.min(fitFont, 11 + ratio * 7)));
+              const color = palette[i % palette.length];
+
+              return (
+                <a
+                  href={`/tags/${tag.name.toLowerCase()}`}
+                  class="bubble absolute rounded-full border-2 flex flex-col items-center justify-center no-underline opacity-0 overflow-hidden text-center px-1 transition-shadow duration-200 hover:shadow-xl hover:z-10"
+                  data-size={size}
+                  style={`width: ${size}px; height: ${size}px; background: ${color.bg}; color: ${color.text}; border-color: ${color.border};`}
+                >
+                  <span
+                    class="font-bold leading-tight break-all"
+                    style={`font-size: ${fontSize}px; max-width: ${Math.round(size * 0.75)}px;`}
+                  >
+                    {tag.name}
+                  </span>
+                  {size >= 100 && <span class="text-xs opacity-60 mt-0.5">{tag.count}</span>}
+                </a>
+              );
+            })
+          }
+        </section>
+      </div>
+    </main>
+
+    <Footer />
+  </div>
+</BaseLayout>
+
+<script is:inline>
+  (function () {
+    var container = document.getElementById("bubble-container");
+    if (!container) return;
+
+    var bubbleEls = container.querySelectorAll(".bubble");
+    if (bubbleEls.length === 0) return;
+
+    var W = container.offsetWidth;
+    var H = container.offsetHeight;
+    var cx = W / 2;
+    var cy = H / 2;
+
+    var GRAVITY = 0.01;
+    var DAMPING = 0.97;
+    var COLLISION = 0.25;
+    var GAP = 5;
+
+    // Scale bubbles based on screen width (800px = full size)
+    var scale = Math.max(0.5, Math.min(1, W / 700));
+
+    var bubbles = [];
+    for (var i = 0; i < bubbleEls.length; i++) {
+      var el = bubbleEls[i];
+      var baseSize = parseInt(el.dataset.size, 10);
+      var size = Math.round(baseSize * scale);
+      var r = size / 2;
+
+      // Apply scaled size to DOM
+      el.style.width = size + "px";
+      el.style.height = size + "px";
+
+      // Scale font size
+      var spans = el.querySelectorAll("span");
+      if (spans[0]) {
+        var baseFontSize = parseFloat(spans[0].style.fontSize) || 13;
+        spans[0].style.fontSize = Math.round(baseFontSize * scale) + "px";
+        spans[0].style.maxWidth = Math.round(size * 0.75) + "px";
+      }
+
+      // Start from edges - scattered far from center
+      var angle = (Math.PI * 2 * i) / bubbleEls.length + (Math.random() - 0.5) * 0.5;
+      var dist = Math.max(W, H) * 0.6 + Math.random() * 100;
+      var startX = cx + Math.cos(angle) * dist;
+      var startY = cy + Math.sin(angle) * dist;
+      bubbles.push({
+        el: el,
+        x: startX,
+        y: startY,
+        vx: 0,
+        vy: 0,
+        r: r,
+      });
+      // Place at starting position and show immediately
+      el.style.left = startX - r + "px";
+      el.style.top = startY - r + "px";
+      el.style.opacity = "1";
+    }
+
+    var settled = false;
+    var settledFrames = 0;
+
+    function step() {
+      var totalV = 0;
+
+      for (var i = 0; i < bubbles.length; i++) {
+        var b = bubbles[i];
+
+        // Gravity toward center
+        b.vx += (cx - b.x) * GRAVITY;
+        b.vy += (cy - b.y) * GRAVITY;
+
+        // Collision with others
+        for (var j = i + 1; j < bubbles.length; j++) {
+          var o = bubbles[j];
+          var ddx = o.x - b.x;
+          var ddy = o.y - b.y;
+          var dist = Math.sqrt(ddx * ddx + ddy * ddy);
+          var minDist = b.r + o.r + GAP;
+
+          if (dist < minDist && dist > 0.1) {
+            var force = (minDist - dist) * COLLISION;
+            var nx = ddx / dist;
+            var ny = ddy / dist;
+            b.vx -= nx * force;
+            b.vy -= ny * force;
+            o.vx += nx * force;
+            o.vy += ny * force;
+          }
+        }
+
+        b.vx *= DAMPING;
+        b.vy *= DAMPING;
+        b.x += b.vx;
+        b.y += b.vy;
+
+        // Soft boundary - bounce gently
+        if (b.x - b.r < 0) {
+          b.x = b.r;
+          b.vx *= -0.3;
+        }
+        if (b.x + b.r > W) {
+          b.x = W - b.r;
+          b.vx *= -0.3;
+        }
+        if (b.y - b.r < 0) {
+          b.y = b.r;
+          b.vy *= -0.3;
+        }
+        if (b.y + b.r > H) {
+          b.y = H - b.r;
+          b.vy *= -0.3;
+        }
+
+        b.el.style.left = b.x - b.r + "px";
+        b.el.style.top = b.y - b.r + "px";
+
+        totalV += Math.abs(b.vx) + Math.abs(b.vy);
+      }
+
+      if (totalV < 0.1) {
+        settledFrames++;
+        if (settledFrames > 30) settled = true;
+      } else {
+        settledFrames = 0;
+      }
+
+      if (!settled) requestAnimationFrame(step);
+    }
+
+    requestAnimationFrame(step);
+
+    // Re-run on resize
+    var resizeTimer;
+    window.addEventListener("resize", function () {
+      clearTimeout(resizeTimer);
+      resizeTimer = setTimeout(function () {
+        W = container.offsetWidth;
+        H = container.offsetHeight;
+        cx = W / 2;
+        cy = H / 2;
+        scale = Math.max(0.5, Math.min(1, W / 700));
+
+        for (var i = 0; i < bubbles.length; i++) {
+          var b = bubbles[i];
+          var baseSize = parseInt(b.el.dataset.size, 10);
+          var newSize = Math.round(baseSize * scale);
+          b.r = newSize / 2;
+          b.el.style.width = newSize + "px";
+          b.el.style.height = newSize + "px";
+          var spans = b.el.querySelectorAll("span");
+          if (spans[0]) {
+            var baseFontSize =
+              parseFloat(spans[0].dataset.baseFont || spans[0].style.fontSize) || 13;
+            spans[0].style.fontSize = Math.round(baseFontSize * scale) + "px";
+            spans[0].style.maxWidth = Math.round(newSize * 0.75) + "px";
+          }
+        }
+
+        settled = false;
+        settledFrames = 0;
+        step();
+      }, 200);
+    });
+  })();
+</script>
