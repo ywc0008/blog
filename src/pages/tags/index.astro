@@ -105,9 +105,9 @@ const siteDescription = "태그별로 포스트를 탐색해 보세요.";
     var cx = W / 2;
     var cy = H / 2;
 
-    var GRAVITY = 0.01;
-    var DAMPING = 0.97;
-    var COLLISION = 0.25;
+    var GRAVITY = 0.006;
+    var DAMPING = 0.985;
+    var COLLISION = 0.15;
     var GAP = 5;
 
     // Scale bubbles based on screen width (800px = full size)
@@ -191,19 +191,19 @@ const siteDescription = "태그별로 포스트를 탐색해 보세요.";
         // Soft boundary - bounce gently
         if (b.x - b.r < 0) {
           b.x = b.r;
-          b.vx *= -0.3;
+          b.vx *= -0.1;
         }
         if (b.x + b.r > W) {
           b.x = W - b.r;
-          b.vx *= -0.3;
+          b.vx *= -0.1;
         }
         if (b.y - b.r < 0) {
           b.y = b.r;
-          b.vy *= -0.3;
+          b.vy *= -0.1;
         }
         if (b.y + b.r > H) {
           b.y = H - b.r;
-          b.vy *= -0.3;
+          b.vy *= -0.1;
         }
 
         b.el.style.left = b.x - b.r + "px";
