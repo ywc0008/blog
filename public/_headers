@@ -1,0 +1,12 @@
+# ===========================================
+# Cloudflare Pages Custom Headers
+# Docs: https://developers.cloudflare.com/pages/configuration/headers/
+# ===========================================
+
+# --- Link headers (RFC 8288) for agent/crawler discovery ---
+# Advertises RSS feed, sitemap, and llms.txt at the HTTP layer so
+# agents can find them before parsing HTML.
+/*
+  Link: </rss.xml>; rel="alternate"; type="application/rss+xml"; title="ywc.life RSS"
+  Link: </sitemap-index.xml>; rel="sitemap"; type="application/xml"
+  Link: </llms.txt>; rel="describedby"; type="text/plain"
