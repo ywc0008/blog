@@ -8,6 +8,7 @@ export interface Props {
   image?: string;
   type?: "website" | "article";
   breadcrumb?: { name: string; url: string }[];
+  noindex?: boolean;
   article?: {
     publishedTime?: string;
     modifiedTime?: string;
@@ -24,6 +25,7 @@ const {
   image,
   type = "website",
   breadcrumb,
+  noindex = false,
   article,
 } = Astro.props;
 ---
@@ -45,6 +47,7 @@ const {
       image={image}
       type={type}
       breadcrumb={breadcrumb}
+      noindex={noindex}
       article={article}
     />
 

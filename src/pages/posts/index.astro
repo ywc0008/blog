@@ -7,36 +7,9 @@ import Card from "../../components/astro/Card.astro";
 import { sortPostsByDate } from "../../utils/post";
 import type { BlogPost } from "../../types";
 
-export async function getStaticPaths() {
-  const allPosts = await getCollection("blog");
-
-  // Extract all unique tags
-  const allTags = new Set<string>();
-  allPosts.forEach((post) => {
-    if (!post.data.draft) {
-      post.data.tags.forEach((tag) => allTags.add(tag));
-    }
-  });
-
-  // Create a path for each tag
-  return Array.from(allTags).map((tag) => ({
-    params: { tag: tag.toLowerCase() },
-    props: { tagName: tag },
-  }));
-}
-
-interface Props {
-  tagName: string;
-}
-
-const { tagName } = Astro.props;
-
-// Fetch all blog posts
 const allPosts = await getCollection("blog");
 
-// Filter by tag
 const posts: BlogPost[] = allPosts
-  .filter((post) => !post.data.draft && post.data.tags.includes(tagName))
   .map((post) => ({
     slug: post.slug,
     title: post.data.title,
@@ -47,26 +20,30 @@ const posts: BlogPost[] = allPosts
     category: post.data.category,
     tags: post.data.tags,
     draft: post.data.draft || false,
-  }));
+  }))
+  .filter((post) => !post.draft);
 
 const sortedPosts = sortPostsByDate(posts);
 
-const siteTitle = `#${tagName} - ywc.life`;
-const siteDescription = `"${tagName}" 태그가 포함된 포스트`;
+const siteTitle = "전체 글 - ywc.life";
+const siteDescription = "ywc.life에 발행된 모든 포스트를 한 곳에서 찾아볼 수 있어요.";
+
+const breadcrumb = [
+  { name: "홈", url: "https://ywc.life" },
+  { name: "전체 글", url: "https://ywc.life/posts" },
+];
 ---
 
-<BaseLayout title={siteTitle} description={siteDescription} noindex={sortedPosts.length < 2}>
+<BaseLayout title={siteTitle} description={siteDescription} breadcrumb={breadcrumb}>
   <div class="min-h-screen flex flex-col">
     <Header />
 
     <main class="flex-1">
       <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <section class="text-center mb-16">
-          <h1 class="text-4xl sm:text-5xl font-bold mb-4 text-gray-900">
-            #{tagName}
-          </h1>
+          <h1 class="text-4xl sm:text-5xl font-bold mb-4 text-gray-900">전체 글</h1>
           <p class="text-xl text-gray-600 max-w-2xl mx-auto">
-            "{tagName}" 태그가 포함된 포스트
+            발행된 모든 포스트를 최신 순으로 모아뒀어요.
           </p>
         </section>
 
@@ -80,7 +57,7 @@ const siteDescription = `"${tagName}" 태그가 포함된 포스트`;
 
           {
             sortedPosts.length === 0 && (
-              <p class="text-center text-gray-500 py-12">이 태그에 포스트가 없습니다.</p>
+              <p class="text-center text-gray-500 py-12">아직 작성된 포스트가 없어요.</p>
             )
           }
         </section>

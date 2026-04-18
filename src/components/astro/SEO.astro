@@ -6,6 +6,7 @@ export interface Props {
   type?: "website" | "article";
   category?: string;
   breadcrumb?: { name: string; url: string }[];
+  noindex?: boolean;
   article?: {
     publishedTime?: string;
     modifiedTime?: string;
@@ -16,7 +17,15 @@ export interface Props {
   };
 }
 
-const { title, description, image, type = "website", category, breadcrumb, article } = Astro.props;
+const {
+  title,
+  description,
+  image,
+  type = "website",
+  breadcrumb,
+  noindex = false,
+  article,
+} = Astro.props;
 
 const canonicalURL = new URL(Astro.url.pathname, Astro.site);
 const imageURL = new URL(image || "/og/default.png", Astro.site);
@@ -28,6 +37,10 @@ const imageURL = new URL(image || "/og/default.png", Astro.site);
 <meta name="description" content={description} />
 <link rel="canonical" href={canonicalURL} />
 <meta name="author" content="ywc" />
+<meta
+  name="robots"
+  content={noindex ? "noindex, follow" : "index, follow, max-image-preview:large"}
+/>
 {
   type === "article" && article?.tags && article.tags.length > 0 && (
     <meta name="keywords" content={article.tags.join(", ")} />
@@ -120,9 +133,13 @@ const imageURL = new URL(image || "/og/default.png", Astro.site);
           url: "https://ywc.life",
         },
         publisher: {
-          "@type": "Person",
-          name: "ywc",
+          "@type": "Organization",
+          name: "ywc.life",
           url: "https://ywc.life",
+          logo: {
+            "@type": "ImageObject",
+            url: "https://ywc.life/og/default.png",
+          },
         },
         image: imageURL.toString(),
         ...(article?.section && { articleSection: article.section }),
