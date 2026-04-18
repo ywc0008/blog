@@ -3,7 +3,7 @@
 // Get repoId and categoryId from https://giscus.app
 const repo = "ywc0008/blog";
 const repoId = "R_kgDOQ1_i3A";
-const category = "General"; // Or "Announcements" - choose from GitHub Discussions categories
+const category = "General";
 const categoryId = "DIC_kwDOQ1_i3M4C0zIb";
 ---
 
@@ -28,35 +28,41 @@ const categoryId = "DIC_kwDOQ1_i3M4C0zIb";
 </div>
 
 <script>
-  // Load Giscus script
-  const script = document.createElement("script");
-  script.src = "https://giscus.app/client.js";
-  script.setAttribute(
-    "data-repo",
-    document.querySelector(".giscus")?.getAttribute("data-repo") || ""
-  );
-  script.setAttribute(
-    "data-repo-id",
-    document.querySelector(".giscus")?.getAttribute("data-repo-id") || ""
-  );
-  script.setAttribute(
-    "data-category",
-    document.querySelector(".giscus")?.getAttribute("data-category") || ""
-  );
-  script.setAttribute(
-    "data-category-id",
-    document.querySelector(".giscus")?.getAttribute("data-category-id") || ""
-  );
-  script.setAttribute("data-mapping", "pathname");
-  script.setAttribute("data-strict", "0");
-  script.setAttribute("data-reactions-enabled", "1");
-  script.setAttribute("data-emit-metadata", "0");
-  script.setAttribute("data-input-position", "top");
-  script.setAttribute("data-theme", "light");
-  script.setAttribute("data-lang", "ko");
-  script.setAttribute("data-loading", "lazy");
-  script.crossOrigin = "anonymous";
-  script.async = true;
+  const giscusContainer = document.querySelector(".giscus");
 
-  document.querySelector(".giscus")?.appendChild(script);
+  function loadGiscus() {
+    if (!giscusContainer) return;
+    const script = document.createElement("script");
+    script.src = "https://giscus.app/client.js";
+    script.setAttribute("data-repo", giscusContainer.getAttribute("data-repo") || "");
+    script.setAttribute("data-repo-id", giscusContainer.getAttribute("data-repo-id") || "");
+    script.setAttribute("data-category", giscusContainer.getAttribute("data-category") || "");
+    script.setAttribute("data-category-id", giscusContainer.getAttribute("data-category-id") || "");
+    script.setAttribute("data-mapping", "pathname");
+    script.setAttribute("data-strict", "0");
+    script.setAttribute("data-reactions-enabled", "1");
+    script.setAttribute("data-emit-metadata", "0");
+    script.setAttribute("data-input-position", "top");
+    script.setAttribute("data-theme", "light");
+    script.setAttribute("data-lang", "ko");
+    script.setAttribute("data-loading", "lazy");
+    script.crossOrigin = "anonymous";
+    script.async = true;
+    giscusContainer.appendChild(script);
+  }
+
+  if (giscusContainer && "IntersectionObserver" in window) {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting) {
+          loadGiscus();
+          observer.disconnect();
+        }
+      },
+      { rootMargin: "200px" }
+    );
+    observer.observe(giscusContainer);
+  } else {
+    loadGiscus();
+  }
 </script>

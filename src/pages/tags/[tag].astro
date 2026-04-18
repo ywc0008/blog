@@ -52,10 +52,31 @@ const posts: BlogPost[] = allPosts
 const sortedPosts = sortPostsByDate(posts);
 
 const siteTitle = `#${tagName} - ywc.life`;
-const siteDescription = `"${tagName}" 태그가 포함된 포스트`;
+
+const topTitles = sortedPosts
+  .slice(0, 3)
+  .map((p) => p.title)
+  .join(", ");
+const rawDescription =
+  sortedPosts.length > 0
+    ? `${tagName} 관련 ${sortedPosts.length}개 포스트 — ${topTitles}`
+    : `${tagName} 관련 포스트`;
+const siteDescription =
+  rawDescription.length > 158 ? rawDescription.slice(0, 155) + "..." : rawDescription;
+
+const breadcrumb = [
+  { name: "홈", url: "https://ywc.life/" },
+  { name: "태그", url: "https://ywc.life/tags" },
+  { name: `#${tagName}`, url: `https://ywc.life/tags/${tagName.toLowerCase()}` },
+];
 ---
 
-<BaseLayout title={siteTitle} description={siteDescription} noindex={sortedPosts.length < 2}>
+<BaseLayout
+  title={siteTitle}
+  description={siteDescription}
+  breadcrumb={breadcrumb}
+  noindex={sortedPosts.length < 2}
+>
   <div class="min-h-screen flex flex-col">
     <Header />
 

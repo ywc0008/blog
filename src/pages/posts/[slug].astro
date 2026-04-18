@@ -7,6 +7,7 @@ import Footer from "../../components/astro/Footer.astro";
 import TOC from "../../components/astro/TOC.astro";
 import Comments from "../../components/astro/Comments.astro";
 import Mermaid from "../../components/astro/Mermaid.astro";
+import RelatedPosts from "../../components/astro/RelatedPosts.astro";
 import { calculateReadingTime } from "../../utils/post";
 import categories from "../../content/categories.json";
 
@@ -138,6 +139,7 @@ const breadcrumb = [
                   height={1200}
                   class="w-full rounded-lg mb-8"
                   loading="eager"
+                  fetchpriority="high"
                   format="webp"
                 />
               )
@@ -148,6 +150,12 @@ const breadcrumb = [
             </div>
 
             <Mermaid />
+
+            <RelatedPosts
+              currentSlug={post.slug}
+              category={post.data.category}
+              tags={post.data.tags}
+            />
 
             <Comments />
           </div>

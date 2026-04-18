@@ -1,0 +1,56 @@
+---
+import { getCollection } from "astro:content";
+
+interface Props {
+  currentSlug: string;
+  category: string;
+  tags: string[];
+}
+
+const { currentSlug, category, tags } = Astro.props;
+
+const allPosts = await getCollection("blog");
+
+const related = allPosts
+  .filter((p) => !p.data.draft && p.slug !== currentSlug && p.data.category === category)
+  .map((p) => ({
+    post: p,
+    overlap: p.data.tags.filter((t) => tags.includes(t)).length,
+  }))
+  .sort((a, b) => {
+    if (b.overlap !== a.overlap) return b.overlap - a.overlap;
+    return b.post.data.pubDate.valueOf() - a.post.data.pubDate.valueOf();
+  })
+  .slice(0, 3)
+  .map((x) => x.post);
+
+const formatDate = (d: Date) =>
+  new Intl.DateTimeFormat("ko-KR", { year: "numeric", month: "long", day: "numeric" }).format(d);
+---
+
+{
+  related.length > 0 && (
+    <section class="mt-12 pt-8 border-t border-gray-200">
+      <h3 class="text-2xl font-bold mb-6 text-gray-900">관련 글</h3>
+      <ul class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 list-none m-0 p-0">
+        {related.map((p) => (
+          <li>
+            <a
+              href={`/posts/${p.slug}`}
+              class="block border border-gray-200 rounded-lg p-5 bg-white hover:border-blue-300 hover:shadow-md transition-all no-underline h-full"
+            >
+              <span class="inline-block px-2 py-0.5 text-xs rounded bg-blue-100 text-blue-800 mb-3">
+                {p.data.category}
+              </span>
+              <h4 class="text-base font-bold text-gray-900 mb-2">{p.data.title}</h4>
+              <p class="text-sm text-gray-600 mb-3">{p.data.description}</p>
+              <time datetime={p.data.pubDate.toISOString()} class="text-xs text-gray-500">
+                {formatDate(new Date(p.data.pubDate))}
+              </time>
+            </a>
+          </li>
+        ))}
+      </ul>
+    </section>
+  )
+}

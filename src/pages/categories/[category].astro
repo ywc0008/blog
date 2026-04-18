@@ -47,9 +47,15 @@ const sortedPosts = sortPostsByDate(posts);
 
 const siteTitle = `${categoryInfo.name} - ywc.life`;
 const siteDescription = categoryInfo.description;
+
+const breadcrumb = [
+  { name: "홈", url: "https://ywc.life/" },
+  { name: "카테고리", url: "https://ywc.life/categories" },
+  { name: categoryInfo.name, url: `https://ywc.life/categories/${categoryInfo.slug}` },
+];
 ---
 
-<BaseLayout title={siteTitle} description={siteDescription}>
+<BaseLayout title={siteTitle} description={siteDescription} breadcrumb={breadcrumb}>
   <div class="min-h-screen flex flex-col">
     <Header />
 
