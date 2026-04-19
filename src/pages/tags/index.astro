@@ -18,21 +18,7 @@ const tags = Array.from(tagMap.entries())
   .map(([name, count]) => ({ name, count }))
   .sort((a, b) => b.count - a.count);
 
-const maxCount = Math.max(...tags.map((t) => t.count), 1);
-
-const MIN_SIZE = 80;
-const MAX_SIZE = 160;
-
-const palette = [
-  { bg: "#dbeafe", text: "#1d4ed8", border: "#bfdbfe" },
-  { bg: "#d1fae5", text: "#047857", border: "#a7f3d0" },
-  { bg: "#ede9fe", text: "#6d28d9", border: "#ddd6fe" },
-  { bg: "#fef3c7", text: "#b45309", border: "#fde68a" },
-  { bg: "#ffe4e6", text: "#be123c", border: "#fecdd3" },
-  { bg: "#cffafe", text: "#0e7490", border: "#a5f3fc" },
-  { bg: "#fce7f3", text: "#be185d", border: "#fbcfe8" },
-  { bg: "#ccfbf1", text: "#0f766e", border: "#99f6e4" },
-];
+const STAGGER_MS = Math.min(30, tags.length > 0 ? 900 / tags.length : 30);
 
 const siteTitle = "Tags - ywc.life";
 const siteDescription = "태그별로 포스트를 탐색해 보세요.";
@@ -44,49 +30,45 @@ const siteDescription = "태그별로 포스트를 탐색해 보세요.";
 
     <main class="flex-1">
       <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <section class="text-center mb-8">
+        <section class="text-center mb-12">
           <h1 class="text-4xl sm:text-5xl font-bold mb-4 text-gray-900">Tags</h1>
-          <p class="text-xl text-gray-600 max-w-2xl mx-auto">
-            태그를 클릭하면 관련 포스트를 볼 수 있어요.
+          <p class="text-lg text-gray-600 max-w-2xl mx-auto">
+            총 <span class="text-gray-900 font-semibold">{tags.length}</span>개의 태그가 있어요.
           </p>
         </section>
 
-        <section
-          id="bubble-container"
-          class="relative mx-auto flex flex-wrap items-center justify-center gap-3 min-h-[350px] sm:min-h-[450px] md:min-h-[500px]"
-          style="max-width: 800px;"
-          aria-label="태그 클라우드"
-        >
-          {
-            tags.map((tag, i) => {
-              const ratio = tag.count / maxCount;
-              const size = Math.round(MIN_SIZE + ratio * (MAX_SIZE - MIN_SIZE));
-              const innerWidth = size * 0.65;
-              const charWidth = 0.6;
-              const fitFont = innerWidth / (tag.name.length * charWidth);
-              const fontSize = Math.round(Math.max(10, Math.min(fitFont, 11 + ratio * 7)));
-              const color = palette[i % palette.length];
-
-              return (
-                <a
-                  href={`/tags/${tag.name.toLowerCase()}`}
-                  class="bubble rounded-full border-2 flex flex-col items-center justify-center no-underline overflow-hidden text-center px-1 transition-shadow duration-200 hover:shadow-xl hover:z-10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
-                  data-size={size}
-                  data-base-font={fontSize}
-                  style={`width: ${size}px; height: ${size}px; background: ${color.bg}; color: ${color.text}; border-color: ${color.border};`}
-                  aria-label={`${tag.name} 태그, 포스트 ${tag.count}개`}
-                >
-                  <span
-                    class="font-bold leading-tight break-all"
-                    style={`font-size: ${fontSize}px; max-width: ${Math.round(size * 0.75)}px;`}
-                  >
-                    {tag.name}
-                  </span>
-                  {size >= 100 && <span class="text-xs opacity-60 mt-0.5">{tag.count}</span>}
-                </a>
-              );
-            })
-          }
+        <section class="max-w-2xl mx-auto" aria-label="태그 목록">
+          <ul class="flex flex-col">
+            {
+              tags.map((tag, i) => {
+                const delay = Math.round(i * STAGGER_MS);
+                return (
+                  <li class="tag-row" style={`--stagger: ${delay}ms;`}>
+                    <a
+                      href={`/tags/${tag.name.toLowerCase()}`}
+                      class="group flex items-center gap-3 py-2.5 px-3 rounded-md no-underline transition-colors duration-150 hover:bg-gray-50 focus-visible:outline-none focus-visible:bg-gray-50 focus-visible:ring-2 focus-visible:ring-blue-500"
+                      aria-label={`${tag.name} 태그, 포스트 ${tag.count}개`}
+                    >
+                      <span class="text-gray-900 font-medium text-base">{tag.name}</span>
+                      <span
+                        class="flex-1 h-0 border-b-2 border-dotted border-gray-300 group-hover:border-gray-400 transition-colors"
+                        aria-hidden="true"
+                      />
+                      <span class="text-gray-500 text-sm tabular-nums min-w-[2ch] text-right">
+                        {tag.count}
+                      </span>
+                      <span
+                        class="inline-block w-4 text-gray-400 text-sm opacity-0 -translate-x-1 transition-all duration-150 group-hover:opacity-100 group-hover:translate-x-0 group-focus-visible:opacity-100 group-focus-visible:translate-x-0"
+                        aria-hidden="true"
+                      >
+                        →
+                      </span>
+                    </a>
+                  </li>
+                );
+              })
+            }
+          </ul>
         </section>
       </div>
     </main>
@@ -95,219 +77,26 @@ const siteDescription = "태그별로 포스트를 탐색해 보세요.";
   </div>
 </BaseLayout>
 
-<script>
-  import {
-    forceSimulation,
-    forceManyBody,
-    forceCenter,
-    forceCollide,
-    type Simulation,
-    type SimulationNodeDatum,
-  } from "d3-force";
-
-  interface BubbleNode extends SimulationNodeDatum {
-    el: HTMLElement;
-    r: number;
-    x: number;
-    y: number;
-    vx: number;
-    vy: number;
+<style>
+  @keyframes tag-row-in {
+    from {
+      opacity: 0;
+      transform: translateY(4px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
   }
 
-  function initBubbleSimulation() {
-    const container = document.getElementById("bubble-container");
-    if (!container) return;
-
-    const bubbleEls = container.querySelectorAll<HTMLElement>(".bubble");
-    if (bubbleEls.length === 0) return;
-
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-      return;
-    }
-
-    const getScale = () => Math.max(0.5, Math.min(1, container.offsetWidth / 700));
-
-    const applyScale = (scale: number) => {
-      bubbleEls.forEach((el) => {
-        const baseSize = parseInt(el.dataset.size ?? "80", 10);
-        const baseFont = parseFloat(el.dataset.baseFont ?? "13");
-        const size = Math.round(baseSize * scale);
-        el.style.width = `${size}px`;
-        el.style.height = `${size}px`;
-        const label = el.querySelector<HTMLElement>("span");
-        if (label) {
-          label.style.fontSize = `${Math.round(baseFont * scale)}px`;
-          label.style.maxWidth = `${Math.round(size * 0.75)}px`;
-        }
-      });
-    };
-
-    applyScale(getScale());
-    void container.offsetHeight;
-
-    const containerRect = container.getBoundingClientRect();
-    const initialCenters = Array.from(bubbleEls).map((el) => {
-      const rect = el.getBoundingClientRect();
-      return {
-        x: rect.left - containerRect.left + rect.width / 2,
-        y: rect.top - containerRect.top + rect.height / 2,
-      };
-    });
-
-    const lockedHeight = container.offsetHeight;
-    container.style.height = `${lockedHeight}px`;
-    container.style.overflow = "hidden";
-    container.classList.remove("flex", "flex-wrap", "gap-3", "items-center", "justify-center");
-
-    bubbleEls.forEach((el, i) => {
-      const center = initialCenters[i];
-      const r = el.offsetWidth / 2;
-      el.style.position = "absolute";
-      el.style.left = "0";
-      el.style.top = "0";
-      el.style.willChange = "transform";
-      el.style.transform = `translate3d(${center.x - r}px, ${center.y - r}px, 0)`;
-    });
-
-    let W = container.offsetWidth;
-    let H = container.offsetHeight;
-    let cx = W / 2;
-    let cy = H / 2;
-
-    const nodes: BubbleNode[] = Array.from(bubbleEls).map((el, i) => ({
-      el,
-      r: el.offsetWidth / 2,
-      x: initialCenters[i].x,
-      y: initialCenters[i].y,
-      vx: 0,
-      vy: 0,
-    }));
-
-    let pointer: { x: number; y: number } | null = null;
-    const POINTER_RADIUS = 140;
-    const POINTER_STRENGTH = 5;
-
-    function pointerRepulsion(alpha: number) {
-      if (!pointer) return;
-      const p = pointer;
-      const radius2 = POINTER_RADIUS * POINTER_RADIUS;
-      for (const node of nodes) {
-        const dx = node.x - p.x;
-        const dy = node.y - p.y;
-        const d2 = dx * dx + dy * dy;
-        if (d2 > 0.01 && d2 < radius2) {
-          const d = Math.sqrt(d2);
-          const falloff = (POINTER_RADIUS - d) / POINTER_RADIUS;
-          const f = falloff * POINTER_STRENGTH * alpha;
-          node.vx += (dx / d) * f;
-          node.vy += (dy / d) * f;
-        }
-      }
-    }
-
-    function clampToBounds(node: BubbleNode) {
-      if (node.x - node.r < 0) {
-        node.x = node.r;
-        node.vx *= -0.3;
-      } else if (node.x + node.r > W) {
-        node.x = W - node.r;
-        node.vx *= -0.3;
-      }
-      if (node.y - node.r < 0) {
-        node.y = node.r;
-        node.vy *= -0.3;
-      } else if (node.y + node.r > H) {
-        node.y = H - node.r;
-        node.vy *= -0.3;
-      }
-    }
-
-    const simulation: Simulation<BubbleNode, undefined> = forceSimulation<BubbleNode>(nodes)
-      .force("charge", forceManyBody<BubbleNode>().strength(-14))
-      .force("center", forceCenter<BubbleNode>(cx, cy).strength(0.06))
-      .force(
-        "collide",
-        forceCollide<BubbleNode>()
-          .radius((d) => d.r + 4)
-          .iterations(2)
-      )
-      .force("pointer", pointerRepulsion)
-      .alphaDecay(0.02)
-      .velocityDecay(0.35)
-      .on("tick", () => {
-        for (const node of nodes) {
-          clampToBounds(node);
-          node.el.style.transform = `translate3d(${node.x - node.r}px, ${node.y - node.r}px, 0)`;
-        }
-      })
-      .on("end", () => {
-        for (const node of nodes) {
-          node.el.style.willChange = "";
-        }
-      });
-
-    const ac = new AbortController();
-
-    container.addEventListener(
-      "pointermove",
-      (event: PointerEvent) => {
-        const rect = container.getBoundingClientRect();
-        pointer = { x: event.clientX - rect.left, y: event.clientY - rect.top };
-        simulation.alphaTarget(0.15).restart();
-        for (const node of nodes) {
-          node.el.style.willChange = "transform";
-        }
-      },
-      { signal: ac.signal }
-    );
-
-    container.addEventListener(
-      "pointerleave",
-      () => {
-        pointer = null;
-        simulation.alphaTarget(0);
-      },
-      { signal: ac.signal }
-    );
-
-    let resizeTimer: number | undefined;
-    const resizeObserver = new ResizeObserver(() => {
-      if (resizeTimer !== undefined) {
-        window.clearTimeout(resizeTimer);
-      }
-      resizeTimer = window.setTimeout(() => {
-        const scale = getScale();
-        applyScale(scale);
-        W = container.offsetWidth;
-        H = container.offsetHeight;
-        cx = W / 2;
-        cy = H / 2;
-        for (const node of nodes) {
-          node.r = node.el.offsetWidth / 2;
-        }
-        simulation.force("center", forceCenter<BubbleNode>(cx, cy).strength(0.06));
-        simulation.alpha(0.6).restart();
-        for (const node of nodes) {
-          node.el.style.willChange = "transform";
-        }
-      }, 200);
-    });
-    resizeObserver.observe(container);
-
-    document.addEventListener(
-      "astro:before-swap",
-      () => {
-        simulation.stop();
-        ac.abort();
-        resizeObserver.disconnect();
-      },
-      { once: true }
-    );
+  .tag-row {
+    animation: tag-row-in 400ms cubic-bezier(0.22, 1, 0.36, 1) both;
+    animation-delay: var(--stagger, 0ms);
   }
 
-  if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", initBubbleSimulation, { once: true });
-  } else {
-    initBubbleSimulation();
+  @media (prefers-reduced-motion: reduce) {
+    .tag-row {
+      animation: none;
+    }
   }
-</script>
+</style>
