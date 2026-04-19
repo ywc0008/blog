@@ -53,8 +53,9 @@ const siteDescription = "태그별로 포스트를 탐색해 보세요.";
 
         <section
           id="bubble-container"
-          class="relative mx-auto overflow-hidden h-[350px] sm:h-[450px] md:h-[500px]"
+          class="relative mx-auto flex flex-wrap items-center justify-center gap-3 min-h-[350px] sm:min-h-[450px] md:min-h-[500px]"
           style="max-width: 800px;"
+          aria-label="태그 클라우드"
         >
           {
             tags.map((tag, i) => {
@@ -69,9 +70,11 @@ const siteDescription = "태그별로 포스트를 탐색해 보세요.";
               return (
                 <a
                   href={`/tags/${tag.name.toLowerCase()}`}
-                  class="bubble absolute rounded-full border-2 flex flex-col items-center justify-center no-underline opacity-0 overflow-hidden text-center px-1 transition-shadow duration-200 hover:shadow-xl hover:z-10"
+                  class="bubble rounded-full border-2 flex flex-col items-center justify-center no-underline overflow-hidden text-center px-1 transition-shadow duration-200 hover:shadow-xl hover:z-10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
                   data-size={size}
+                  data-base-font={fontSize}
                   style={`width: ${size}px; height: ${size}px; background: ${color.bg}; color: ${color.text}; border-color: ${color.border};`}
+                  aria-label={`${tag.name} 태그, 포스트 ${tag.count}개`}
                 >
                   <span
                     class="font-bold leading-tight break-all"
@@ -92,169 +95,219 @@ const siteDescription = "태그별로 포스트를 탐색해 보세요.";
   </div>
 </BaseLayout>
 
-<script is:inline>
-  (function () {
-    var container = document.getElementById("bubble-container");
+<script>
+  import {
+    forceSimulation,
+    forceManyBody,
+    forceCenter,
+    forceCollide,
+    type Simulation,
+    type SimulationNodeDatum,
+  } from "d3-force";
+
+  interface BubbleNode extends SimulationNodeDatum {
+    el: HTMLElement;
+    r: number;
+    x: number;
+    y: number;
+    vx: number;
+    vy: number;
+  }
+
+  function initBubbleSimulation() {
+    const container = document.getElementById("bubble-container");
     if (!container) return;
 
-    var bubbleEls = container.querySelectorAll(".bubble");
+    const bubbleEls = container.querySelectorAll<HTMLElement>(".bubble");
     if (bubbleEls.length === 0) return;
 
-    var W = container.offsetWidth;
-    var H = container.offsetHeight;
-    var cx = W / 2;
-    var cy = H / 2;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      return;
+    }
 
-    var GRAVITY = 0.006;
-    var DAMPING = 0.985;
-    var COLLISION = 0.15;
-    var GAP = 5;
+    const getScale = () => Math.max(0.5, Math.min(1, container.offsetWidth / 700));
 
-    // Scale bubbles based on screen width (800px = full size)
-    var scale = Math.max(0.5, Math.min(1, W / 700));
-
-    var bubbles = [];
-    for (var i = 0; i < bubbleEls.length; i++) {
-      var el = bubbleEls[i];
-      var baseSize = parseInt(el.dataset.size, 10);
-      var size = Math.round(baseSize * scale);
-      var r = size / 2;
-
-      // Apply scaled size to DOM
-      el.style.width = size + "px";
-      el.style.height = size + "px";
-
-      // Scale font size
-      var spans = el.querySelectorAll("span");
-      if (spans[0]) {
-        var baseFontSize = parseFloat(spans[0].style.fontSize) || 13;
-        spans[0].style.fontSize = Math.round(baseFontSize * scale) + "px";
-        spans[0].style.maxWidth = Math.round(size * 0.75) + "px";
-      }
-
-      // Start from edges - scattered far from center
-      var angle = (Math.PI * 2 * i) / bubbleEls.length + (Math.random() - 0.5) * 0.5;
-      var dist = Math.max(W, H) * 0.6 + Math.random() * 100;
-      var startX = cx + Math.cos(angle) * dist;
-      var startY = cy + Math.sin(angle) * dist;
-      bubbles.push({
-        el: el,
-        x: startX,
-        y: startY,
-        vx: 0,
-        vy: 0,
-        r: r,
+    const applyScale = (scale: number) => {
+      bubbleEls.forEach((el) => {
+        const baseSize = parseInt(el.dataset.size ?? "80", 10);
+        const baseFont = parseFloat(el.dataset.baseFont ?? "13");
+        const size = Math.round(baseSize * scale);
+        el.style.width = `${size}px`;
+        el.style.height = `${size}px`;
+        const label = el.querySelector<HTMLElement>("span");
+        if (label) {
+          label.style.fontSize = `${Math.round(baseFont * scale)}px`;
+          label.style.maxWidth = `${Math.round(size * 0.75)}px`;
+        }
       });
-      // Place at starting position and show immediately
-      el.style.left = startX - r + "px";
-      el.style.top = startY - r + "px";
-      el.style.opacity = "1";
+    };
+
+    applyScale(getScale());
+    void container.offsetHeight;
+
+    const containerRect = container.getBoundingClientRect();
+    const initialCenters = Array.from(bubbleEls).map((el) => {
+      const rect = el.getBoundingClientRect();
+      return {
+        x: rect.left - containerRect.left + rect.width / 2,
+        y: rect.top - containerRect.top + rect.height / 2,
+      };
+    });
+
+    const lockedHeight = container.offsetHeight;
+    container.style.height = `${lockedHeight}px`;
+    container.style.overflow = "hidden";
+    container.classList.remove("flex", "flex-wrap", "gap-3", "items-center", "justify-center");
+
+    bubbleEls.forEach((el, i) => {
+      const center = initialCenters[i];
+      const r = el.offsetWidth / 2;
+      el.style.position = "absolute";
+      el.style.left = "0";
+      el.style.top = "0";
+      el.style.willChange = "transform";
+      el.style.transform = `translate3d(${center.x - r}px, ${center.y - r}px, 0)`;
+    });
+
+    let W = container.offsetWidth;
+    let H = container.offsetHeight;
+    let cx = W / 2;
+    let cy = H / 2;
+
+    const nodes: BubbleNode[] = Array.from(bubbleEls).map((el, i) => ({
+      el,
+      r: el.offsetWidth / 2,
+      x: initialCenters[i].x,
+      y: initialCenters[i].y,
+      vx: 0,
+      vy: 0,
+    }));
+
+    let pointer: { x: number; y: number } | null = null;
+    const POINTER_RADIUS = 140;
+    const POINTER_STRENGTH = 5;
+
+    function pointerRepulsion(alpha: number) {
+      if (!pointer) return;
+      const p = pointer;
+      const radius2 = POINTER_RADIUS * POINTER_RADIUS;
+      for (const node of nodes) {
+        const dx = node.x - p.x;
+        const dy = node.y - p.y;
+        const d2 = dx * dx + dy * dy;
+        if (d2 > 0.01 && d2 < radius2) {
+          const d = Math.sqrt(d2);
+          const falloff = (POINTER_RADIUS - d) / POINTER_RADIUS;
+          const f = falloff * POINTER_STRENGTH * alpha;
+          node.vx += (dx / d) * f;
+          node.vy += (dy / d) * f;
+        }
+      }
     }
 
-    var settled = false;
-    var settledFrames = 0;
-
-    function step() {
-      var totalV = 0;
-
-      for (var i = 0; i < bubbles.length; i++) {
-        var b = bubbles[i];
-
-        // Gravity toward center
-        b.vx += (cx - b.x) * GRAVITY;
-        b.vy += (cy - b.y) * GRAVITY;
-
-        // Collision with others
-        for (var j = i + 1; j < bubbles.length; j++) {
-          var o = bubbles[j];
-          var ddx = o.x - b.x;
-          var ddy = o.y - b.y;
-          var dist = Math.sqrt(ddx * ddx + ddy * ddy);
-          var minDist = b.r + o.r + GAP;
-
-          if (dist < minDist && dist > 0.1) {
-            var force = (minDist - dist) * COLLISION;
-            var nx = ddx / dist;
-            var ny = ddy / dist;
-            b.vx -= nx * force;
-            b.vy -= ny * force;
-            o.vx += nx * force;
-            o.vy += ny * force;
-          }
-        }
-
-        b.vx *= DAMPING;
-        b.vy *= DAMPING;
-        b.x += b.vx;
-        b.y += b.vy;
-
-        // Soft boundary - bounce gently
-        if (b.x - b.r < 0) {
-          b.x = b.r;
-          b.vx *= -0.1;
-        }
-        if (b.x + b.r > W) {
-          b.x = W - b.r;
-          b.vx *= -0.1;
-        }
-        if (b.y - b.r < 0) {
-          b.y = b.r;
-          b.vy *= -0.1;
-        }
-        if (b.y + b.r > H) {
-          b.y = H - b.r;
-          b.vy *= -0.1;
-        }
-
-        b.el.style.left = b.x - b.r + "px";
-        b.el.style.top = b.y - b.r + "px";
-
-        totalV += Math.abs(b.vx) + Math.abs(b.vy);
+    function clampToBounds(node: BubbleNode) {
+      if (node.x - node.r < 0) {
+        node.x = node.r;
+        node.vx *= -0.3;
+      } else if (node.x + node.r > W) {
+        node.x = W - node.r;
+        node.vx *= -0.3;
       }
-
-      if (totalV < 0.1) {
-        settledFrames++;
-        if (settledFrames > 30) settled = true;
-      } else {
-        settledFrames = 0;
+      if (node.y - node.r < 0) {
+        node.y = node.r;
+        node.vy *= -0.3;
+      } else if (node.y + node.r > H) {
+        node.y = H - node.r;
+        node.vy *= -0.3;
       }
-
-      if (!settled) requestAnimationFrame(step);
     }
 
-    requestAnimationFrame(step);
+    const simulation: Simulation<BubbleNode, undefined> = forceSimulation<BubbleNode>(nodes)
+      .force("charge", forceManyBody<BubbleNode>().strength(-14))
+      .force("center", forceCenter<BubbleNode>(cx, cy).strength(0.06))
+      .force(
+        "collide",
+        forceCollide<BubbleNode>()
+          .radius((d) => d.r + 4)
+          .iterations(2)
+      )
+      .force("pointer", pointerRepulsion)
+      .alphaDecay(0.02)
+      .velocityDecay(0.35)
+      .on("tick", () => {
+        for (const node of nodes) {
+          clampToBounds(node);
+          node.el.style.transform = `translate3d(${node.x - node.r}px, ${node.y - node.r}px, 0)`;
+        }
+      })
+      .on("end", () => {
+        for (const node of nodes) {
+          node.el.style.willChange = "";
+        }
+      });
 
-    // Re-run on resize
-    var resizeTimer;
-    window.addEventListener("resize", function () {
-      clearTimeout(resizeTimer);
-      resizeTimer = setTimeout(function () {
+    const ac = new AbortController();
+
+    container.addEventListener(
+      "pointermove",
+      (event: PointerEvent) => {
+        const rect = container.getBoundingClientRect();
+        pointer = { x: event.clientX - rect.left, y: event.clientY - rect.top };
+        simulation.alphaTarget(0.15).restart();
+        for (const node of nodes) {
+          node.el.style.willChange = "transform";
+        }
+      },
+      { signal: ac.signal }
+    );
+
+    container.addEventListener(
+      "pointerleave",
+      () => {
+        pointer = null;
+        simulation.alphaTarget(0);
+      },
+      { signal: ac.signal }
+    );
+
+    let resizeTimer: number | undefined;
+    const resizeObserver = new ResizeObserver(() => {
+      if (resizeTimer !== undefined) {
+        window.clearTimeout(resizeTimer);
+      }
+      resizeTimer = window.setTimeout(() => {
+        const scale = getScale();
+        applyScale(scale);
         W = container.offsetWidth;
         H = container.offsetHeight;
         cx = W / 2;
         cy = H / 2;
-        scale = Math.max(0.5, Math.min(1, W / 700));
-
-        for (var i = 0; i < bubbles.length; i++) {
-          var b = bubbles[i];
-          var baseSize = parseInt(b.el.dataset.size, 10);
-          var newSize = Math.round(baseSize * scale);
-          b.r = newSize / 2;
-          b.el.style.width = newSize + "px";
-          b.el.style.height = newSize + "px";
-          var spans = b.el.querySelectorAll("span");
-          if (spans[0]) {
-            var baseFontSize =
-              parseFloat(spans[0].dataset.baseFont || spans[0].style.fontSize) || 13;
-            spans[0].style.fontSize = Math.round(baseFontSize * scale) + "px";
-            spans[0].style.maxWidth = Math.round(newSize * 0.75) + "px";
-          }
+        for (const node of nodes) {
+          node.r = node.el.offsetWidth / 2;
         }
-
-        settled = false;
-        settledFrames = 0;
-        step();
+        simulation.force("center", forceCenter<BubbleNode>(cx, cy).strength(0.06));
+        simulation.alpha(0.6).restart();
+        for (const node of nodes) {
+          node.el.style.willChange = "transform";
+        }
       }, 200);
     });
-  })();
+    resizeObserver.observe(container);
+
+    document.addEventListener(
+      "astro:before-swap",
+      () => {
+        simulation.stop();
+        ac.abort();
+        resizeObserver.disconnect();
+      },
+      { once: true }
+    );
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", initBubbleSimulation, { once: true });
+  } else {
+    initBubbleSimulation();
+  }
 </script>

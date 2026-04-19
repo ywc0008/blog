@@ -34,8 +34,10 @@ export const GET: APIRoute = async () => {
   });
 
   const png = await sharp(Buffer.from(svg)).png().toBuffer();
+  const pngBody = new Uint8Array(png.byteLength);
+  pngBody.set(png);
 
-  return new Response(png, {
+  return new Response(pngBody, {
     headers: {
       "Content-Type": "image/png",
       "Cache-Control": "public, max-age=31536000, immutable",

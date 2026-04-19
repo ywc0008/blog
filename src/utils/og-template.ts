@@ -1,4 +1,4 @@
-import type { ReactNode } from "satori";
+import type { ReactNode } from "react";
 
 interface OgTemplateOptions {
   title: string;
@@ -22,7 +22,7 @@ function h(
       ...(props || {}),
       children: children.length === 1 ? children[0] : children,
     },
-  } as ReactNode;
+  } as unknown as ReactNode;
 }
 
 export function generateOgTemplate({ title, category, date }: OgTemplateOptions): ReactNode {

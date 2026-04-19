@@ -95,6 +95,7 @@ const imageURL = new URL(image || "/og/default.png", Astro.site);
 {
   type === "website" ? (
     <script
+      is:inline
       type="application/ld+json"
       set:html={JSON.stringify({
         "@context": "https://schema.org",
@@ -115,6 +116,7 @@ const imageURL = new URL(image || "/og/default.png", Astro.site);
     />
   ) : (
     <script
+      is:inline
       type="application/ld+json"
       set:html={JSON.stringify({
         "@context": "https://schema.org",
@@ -155,6 +157,7 @@ const imageURL = new URL(image || "/og/default.png", Astro.site);
 {
   breadcrumb && breadcrumb.length > 0 && (
     <script
+      is:inline
       type="application/ld+json"
       set:html={JSON.stringify({
         "@context": "https://schema.org",
