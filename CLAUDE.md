@@ -145,6 +145,7 @@ draft: boolean
 - **BlogPost Type**: `heroImage?: ImageMetadata` in `src/types/index.ts`
 - **Cloudflare Deployment**: Without Sharp, builds will fail with MissingSharp error
 - **Hero 이미지 LCP 최적화**: 포스트 상세의 hero `<Image>`는 `loading="eager"` + `fetchpriority="high"` 조합 사용 (LCP 대상)
+- **목록 페이지 첫 카드 LCP 최적화**: `Card.astro`의 `priority` prop으로 제어. 목록 페이지(홈/posts/categories/tags)에선 `.map((post, i) => <Card post={post} priority={i === 0} />)` 패턴 필수. 첫 카드만 `eager + fetchpriority="high"`로, 나머지는 `lazy` 유지. 새 목록 페이지 추가 시 누락 주의
 
 ### Key Files
 
