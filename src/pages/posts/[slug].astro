@@ -8,6 +8,7 @@ import TOC from "../../components/astro/TOC.astro";
 import Comments from "../../components/astro/Comments.astro";
 import Mermaid from "../../components/astro/Mermaid.astro";
 import RelatedPosts from "../../components/astro/RelatedPosts.astro";
+import CodeCopy from "../../components/astro/CodeCopy.astro";
 import { calculateReadingTime } from "../../utils/post";
 import categories from "../../content/categories.json";
 
@@ -150,6 +151,7 @@ const breadcrumb = [
             </div>
 
             <Mermaid />
+            <CodeCopy slug={post.slug} />
 
             <RelatedPosts
               currentSlug={post.slug}

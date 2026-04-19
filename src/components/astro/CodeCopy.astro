@@ -1,0 +1,64 @@
+---
+const { slug } = Astro.props as { slug: string };
+---
+
+<script is:inline data-post-slug={slug}>
+  (function () {
+    var currentScript = document.currentScript;
+    var postSlug = currentScript ? currentScript.dataset.postSlug : "";
+
+    function getLanguageFromPre(pre) {
+      var code = pre.querySelector("code");
+      if (!code) return "unknown";
+      var match = code.className.match(/language-(\S+)/);
+      return match ? match[1] : "unknown";
+    }
+
+    function createCopyButton(pre) {
+      var button = document.createElement("button");
+      button.type = "button";
+      button.className =
+        "absolute top-2 right-2 px-2 py-1 text-xs text-gray-300 bg-gray-700 hover:bg-gray-600 rounded opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer border-none";
+      button.textContent = "Copy";
+      button.setAttribute("aria-label", "코드 복사");
+
+      var language = getLanguageFromPre(pre);
+
+      button.addEventListener("click", async function () {
+        var code = pre.querySelector("code");
+        var text = code ? code.textContent : pre.textContent;
+
+        try {
+          await navigator.clipboard.writeText(text || "");
+          button.textContent = "Copied!";
+          setTimeout(function () {
+            button.textContent = "Copy";
+          }, 1500);
+
+          if (typeof window.trackEvent === "function") {
+            window.trackEvent("code_copy", {
+              language: language,
+              post_slug: postSlug,
+              code_length: (text || "").length,
+            });
+          }
+        } catch (err) {
+          button.textContent = "Failed";
+          console.error("복사 실패:", err);
+        }
+      });
+
+      return button;
+    }
+
+    function enhancePre(pre) {
+      if (pre.dataset.copyEnhanced) return;
+      pre.dataset.copyEnhanced = "1";
+      pre.classList.add("group", "relative");
+      pre.appendChild(createCopyButton(pre));
+    }
+
+    var pres = document.querySelectorAll(".prose pre");
+    pres.forEach(enhancePre);
+  })();
+</script>

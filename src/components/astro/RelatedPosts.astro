@@ -22,7 +22,7 @@ const related = allPosts
     return b.post.data.pubDate.valueOf() - a.post.data.pubDate.valueOf();
   })
   .slice(0, 3)
-  .map((x) => x.post);
+  .map((x) => ({ post: x.post, overlap: x.overlap }));
 
 const formatDate = (d: Date) =>
   new Intl.DateTimeFormat("ko-KR", { year: "numeric", month: "long", day: "numeric" }).format(d);
@@ -33,11 +33,15 @@ const formatDate = (d: Date) =>
     <section class="mt-12 pt-8 border-t border-gray-200">
       <h3 class="text-2xl font-bold mb-6 text-gray-900">관련 글</h3>
       <ul class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 list-none m-0 p-0">
-        {related.map((p) => (
+        {related.map(({ post: p, overlap }, index) => (
           <li>
             <a
               href={`/posts/${p.slug}`}
-              class="block border border-gray-200 rounded-lg p-5 bg-white hover:border-blue-300 hover:shadow-md transition-all no-underline h-full"
+              class="related-post-link block border border-gray-200 rounded-lg p-5 bg-white hover:border-blue-300 hover:shadow-md transition-all no-underline h-full"
+              data-from-slug={currentSlug}
+              data-to-slug={p.slug}
+              data-overlap={overlap}
+              data-position={index + 1}
             >
               <span class="inline-block px-2 py-0.5 text-xs rounded bg-blue-100 text-blue-800 mb-3">
                 {p.data.category}
@@ -54,3 +58,21 @@ const formatDate = (d: Date) =>
     </section>
   )
 }
+
+<script is:inline>
+  (function () {
+    var links = document.querySelectorAll(".related-post-link");
+    links.forEach(function (link) {
+      link.addEventListener("click", function () {
+        if (typeof window.trackEvent === "function") {
+          window.trackEvent("related_post_click", {
+            from_slug: link.dataset.fromSlug,
+            to_slug: link.dataset.toSlug,
+            overlap: Number(link.dataset.overlap),
+            position: Number(link.dataset.position),
+          });
+        }
+      });
+    });
+  })();
+</script>

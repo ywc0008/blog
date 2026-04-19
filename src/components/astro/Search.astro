@@ -62,11 +62,21 @@
       container.appendChild(errorDiv);
     }
 
-    function createResultItem(result) {
+    function createResultItem(result, query, position) {
       var link = document.createElement("a");
       link.href = result.url;
       link.className =
         "block p-4 hover:bg-gray-50 rounded-lg transition-colors no-underline border-b border-gray-100";
+
+      link.addEventListener("click", function () {
+        if (typeof window.trackEvent === "function") {
+          window.trackEvent("search", {
+            search_term: query,
+            result_position: position,
+            result_url: result.url,
+          });
+        }
+      });
 
       var title = document.createElement("h3");
       title.className = "text-lg font-semibold text-gray-900 mb-1";
@@ -192,8 +202,8 @@
             }
 
             resultsContainer.textContent = "";
-            results.forEach(function (result) {
-              resultsContainer.appendChild(createResultItem(result));
+            results.forEach(function (result, index) {
+              resultsContainer.appendChild(createResultItem(result, query, index + 1));
             });
           } catch (error) {
             console.error("검색 에러:", error);
