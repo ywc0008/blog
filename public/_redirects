@@ -4,23 +4,24 @@
 # 처리 순서: 위에서부터 first-match wins
 # ===========================================
 
-# --- 1. 슬러그 불일치 (구체적 매핑 — catch-all보다 위) ---
+# --- 1. 슬러그 불일치 / 삭제된 글 (구체적 매핑 — catch-all보다 위) ---
 /blog/nextjs-15-msw         /posts/msw                  301
+/blog/DAsP-summary-1        /posts                      301
 /posts/MSW                  /posts/msw                  301
 /posts/Luxon                /posts/luxon                301
 /posts/react-v19-forwardRef /posts/react-v19-forwardref 301
 /posts/MSW/MSW_main.avif    /posts/msw                  301
 
-# --- 2. 옛 Next.js 라우트 catch-all ---
+# --- 2. 옛 Next.js 시스템 경로 (catch-all보다 위) ---
+/feed.xml         /rss.xml           301
+/blog/rss.xml     /rss.xml           301
+/blog-sitemap.xml /sitemap-index.xml 301
+
+# --- 3. 옛 Next.js 라우트 catch-all ---
 /blog/category/* /categories/:splat 301
 /blog/tag/*      /tags/:splat       301
 /blog/page/*     /posts             301
 /blog/*          /posts/:splat      301
-
-# --- 3. 옛 Next.js 시스템 경로 ---
-/feed.xml         /rss.xml           301
-/blog/rss.xml     /rss.xml           301
-/blog-sitemap.xml /sitemap-index.xml 301
 
 # --- 4. 잘못된 경로 (단수 → 복수) ---
 /tag/DAsP   /tags              301
