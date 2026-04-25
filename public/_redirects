@@ -16,6 +16,7 @@
 /feed.xml         /rss.xml           301
 /blog/rss.xml     /rss.xml           301
 /blog-sitemap.xml /sitemap-index.xml 301
+/favicon.ico      /favicon.svg       301
 
 # --- 3. 옛 Next.js 라우트 catch-all ---
 /blog/category/* /categories/:splat 301
