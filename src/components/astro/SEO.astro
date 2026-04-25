@@ -27,7 +27,10 @@ const {
   article,
 } = Astro.props;
 
-const canonicalURL = new URL(Astro.url.pathname, Astro.site);
+// build.format: "file" 모드에서 Astro.url.pathname이 .html 확장자를 포함함
+// canonical/og/twitter URL에 .html이 붙는 것을 방지
+const cleanPath = Astro.url.pathname.replace(/\/index\.html$/, "/").replace(/\.html$/, "");
+const canonicalURL = new URL(cleanPath, Astro.site);
 const imageURL = new URL(image || "/og/default.png", Astro.site);
 ---
 
