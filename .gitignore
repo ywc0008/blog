@@ -37,3 +37,9 @@ pnpm-debug.log*
 
 # oh-my-claudecode
 .omc/
+
+# wrangler (Cloudflare Pages 로컬 dev 캐시 — pnpm preview:cf 실행 시 생성)
+.wrangler/
+
+# superpowers brainstorming spec (로컬 참고용, 추적 안 함)
+docs/superpowers/
